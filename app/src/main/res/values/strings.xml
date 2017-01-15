@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">RxDownloader</string>
+
+
+    <!-- The names of the objects to be displayed on the recylerview-->
+    <string-array name="image_display_names_list">
+        <item>Tree</item>
+        <item>Satellite</item>
+    </string-array>
+
+    <!-- The list of urls to be downloaded-->
+    <string-array name="image_download_url_list">
+        <item>http://www.kenrockwell.com/contax/images/g2/examples/31120037-5mb.jpg></item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+    </string-array>
+</resources>
