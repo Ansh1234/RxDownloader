@@ -11,15 +11,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.reactivestreams.Subscriber;
-
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Flowable;
-import io.reactivex.functions.Consumer;
+import io.reactivex.Observable;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.ResourceSubscriber;
 
 /**
  * Created by anshul on 15/1/17.
@@ -60,52 +55,35 @@ public class ImageDetailsViewHolder extends RecyclerView.ViewHolder
     if (context == null) {
       return;
     }
+
     DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context
         .DOWNLOAD_SERVICE);
     Uri uri = Uri.parse(imageDownloadUrl);
     DownloadManager.Request request = new DownloadManager.Request(uri);
     final long downloadId = downloadManager.enqueue(request);
 
-    ResourceSubscriber subscriber = new ResourceSubscriber<Long>() {
+    Observable.interval(1000, TimeUnit.SECONDS).map(new Function<Long, Object>() {
       @Override
-      protected void onStart() {
-        request(1);
+      public Object apply(Long aLong) throws Exception {
+        getDownloadStatus(downloadId);
+        return null;
       }
-
-      @Override
-      public void onNext(Long t) {
-        Log.d(TAG, "received " + t);
-        updateDownloadStatus(downloadId, this);
-        request(1L);
-      }
-
-      @Override
-      public void onError(Throwable t) {
-        Log.d(TAG, "inside error");
-      }
-
-      @Override
-      public void onComplete() {
-        Log.d(TAG, "inside complete");
-      }
-    };
-    Flowable flowable = Flowable.interval(1, TimeUnit.SECONDS).observeOn(Schedulers.io());
-    flowable.subscribe(subscriber);
-
+    });
+    return;
   }
 
-  private void updateDownloadStatus(long downloadId, ResourceSubscriber subscriber) {
-    Log.d("DownloadManager", "updateDownloadStatus");
+  private int getDownloadStatus(long downloadId) {
+    Log.d("DownloadManager", "getDownloadStatus");
     DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context
         .DOWNLOAD_SERVICE);
     DownloadManager.Query query = new DownloadManager.Query();
     query.setFilterById(downloadId);
-
+    int progress = -1;
     Cursor cursor = null;
     try {
       cursor = downloadManager.query(query);
       if (cursor == null || !cursor.moveToFirst()) {
-        return;
+        return progress;
       }
       float bytesDownloaded =
           cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
@@ -114,7 +92,7 @@ public class ImageDetailsViewHolder extends RecyclerView.ViewHolder
       int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
       int downloadStatus = cursor.getInt(columnIndex);
 
-      int progress = (int) (bytesDownloaded / bytesTotal) / 100;
+      progress = (int) (bytesDownloaded / bytesTotal) / 100;
       Log.d("DownloadManager percent", "" + (bytesDownloaded / bytesTotal) * 100);
       progressBar.setProgress(progress);
       switch (downloadStatus) {
@@ -122,8 +100,6 @@ public class ImageDetailsViewHolder extends RecyclerView.ViewHolder
           break;
 
         case DownloadManager.STATUS_SUCCESSFUL:
-          subscriber.dispose();
-
           break;
 
         case DownloadManager.STATUS_PENDING:
@@ -139,6 +115,7 @@ public class ImageDetailsViewHolder extends RecyclerView.ViewHolder
       if (cursor != null) {
         cursor.close();
       }
+      return progress;
     }
   }
 }
