@@ -28,7 +28,7 @@ import io.reactivex.schedulers.Timed;
 public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
   private Subscription emoticonSubscription;
   private Subscriber subscriber;
-  private final int MINIMUM_DURATION_BETWEEN_EMOTICONS = 200; // in milliseconds
+  private final int MINIMUM_DURATION_BETWEEN_EMOTICONS = 2000; // in milliseconds
   @BindView(R.id.like_emoticon)
   ImageView likeEmoticonButton;
   @BindView(R.id.love_emoticon)
@@ -70,7 +70,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
         convertClickEventToStream(e);
       }
     };
-    //Give the backpressure strategey as buffer, so that the click items do not drop.
+    //Give the backpressure strategey as BUFFER, so that the click items do not drop.
     Flowable emoticonsFlowable = Flowable.create(flowableOnSubscribe, BackpressureStrategy.BUFFER);
     Flowable<Timed> emoticonsTimedFlowable = emoticonsFlowable.timestamp();
     subscriber = getSubscriber();
@@ -95,23 +95,27 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
         Emoticons emoticons = (Emoticons) ((Timed) o).value();
         switch (emoticons) {
           case LIKE:
-            System.out.println("inside like");
+            likeEmoticonFlow.setVisibility(View.VISIBLE);
             likeEmoticonFlow.startAnimation(animation);
             break;
           case LOVE:
-            System.out.println("inside love");
+            loveEmoticonFlow.setVisibility(View.VISIBLE);
             loveEmoticonFlow.startAnimation(animation);
             break;
           case HAHA:
+            hahaEmoticonFlow.setVisibility(View.VISIBLE);
             hahaEmoticonFlow.startAnimation(animation);
             break;
           case WOW:
+            wowEmoticonFlow.setVisibility(View.VISIBLE);
             wowEmoticonFlow.startAnimation(animation);
             break;
           case SAD:
+            sadEmoticonFlow.setVisibility(View.VISIBLE);
             sadEmoticonFlow.startAnimation(animation);
             break;
           case ANGRY:
+            angryEmoticonFlow.setVisibility(View.VISIBLE);
             angryEmoticonFlow.startAnimation(animation);
             break;
         }
@@ -145,6 +149,14 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     };
   }
 
+  @Override
+  public void onStop() {
+    super.onStop();
+    if (emoticonSubscription != null) {
+      emoticonSubscription.cancel();
+    }
+  }
+
   private void convertClickEventToStream(final FlowableEmitter e) {
     likeEmoticonButton.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -172,6 +184,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
         e.onNext(Emoticons.WOW);
       }
     });
+
     sadEmoticonButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
