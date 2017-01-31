@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.anshul.rxdownloader.R;
@@ -14,6 +13,8 @@ import com.example.anshul.rxdownloader.R;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -27,79 +28,57 @@ import io.reactivex.schedulers.Timed;
 public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
   private Subscription emoticonSubscription;
   private Subscriber subscriber;
-  private final int MINIMUM_DURATION_BETWEEN_EMOTICONS = 2000; // in milliseconds
+  private final int MINIMUM_DURATION_BETWEEN_EMOTICONS = 200; // in milliseconds
+  @BindView(R.id.like_emoticon)
+  ImageView likeEmoticonButton;
+  @BindView(R.id.love_emoticon)
+  ImageView loveEmoticonButton;
+  @BindView(R.id.haha_emoticon)
+  ImageView hahaEmoticonButton;
+  @BindView(R.id.wow_emoticon)
+  ImageView wowEmoticonButton;
+  @BindView(R.id.sad_emoticon)
+  ImageView sadEmoticonButton;
+  @BindView(R.id.angry_emoticon)
+  ImageView angryEmoticonButton;
+  @BindView(R.id.like_emoticon_flow)
+  ImageView likeEmoticonFlow;
+  @BindView(R.id.love_emoticon_flow)
+  ImageView loveEmoticonFlow;
+  @BindView(R.id.haha_emoticon_flow)
+  ImageView hahaEmoticonFlow;
+  @BindView(R.id.wow_emoticon_flow)
+  ImageView wowEmoticonFlow;
+  @BindView(R.id.sad_emoticon_flow)
+  ImageView sadEmoticonFlow;
+  @BindView(R.id.angry_emoticon_flow)
+  ImageView angryEmoticonFlow;
+  private Animation animation;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_fb_live_video_reaction_demo);
+    ButterKnife.bind(this);
 
-    final ImageButton likeEmoticonButton = (ImageButton) findViewById(R.id.like_emoticon);
-    final ImageButton loveEmoticonButton = (ImageButton) findViewById(R.id.love_emoticon);
-    final ImageButton hahaEmoticonButton = (ImageButton) findViewById(R.id.haha_emoticon);
-    final ImageButton wowEmoticonButton = (ImageButton) findViewById(R.id.wow_emoticon);
-    final ImageButton sadEmoticonButton = (ImageButton) findViewById(R.id.sad_emoticon);
-    final ImageButton angryEmoticonButton = (ImageButton) findViewById(R.id.angry_emoticon);
-    final ImageView likeEmoticonFlow = (ImageView) findViewById(R.id.like_emoticon_flow);
-    final ImageView loveEmoticonFlow = (ImageView) findViewById(R.id.love_emoticon_flow);
-    final ImageView hahaEmoticonFlow = (ImageView) findViewById(R.id.haha_emoticon_flow);
-    final ImageView wowEmoticonFlow = (ImageView) findViewById(R.id.wow_emoticon_flow);
-    final ImageView sadEmoticonFlow = (ImageView) findViewById(R.id.sad_emoticon_flow);
-    final ImageView angryEmoticonFlow = (ImageView) findViewById(R.id.angry_emoticon_flow);
-    final Animation animSlide = AnimationUtils.loadAnimation(getApplicationContext(),
+    animation = AnimationUtils.loadAnimation(getApplicationContext(),
         R.anim.slide);
 
-
-    //TODO anshul.jain is this the best way for creating a view observable?
     FlowableOnSubscribe flowableOnSubscribe = new FlowableOnSubscribe() {
       @Override
       public void subscribe(final FlowableEmitter e) throws Exception {
-        likeEmoticonButton.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            e.onNext(Emoticons.LIKE);
-          }
-        });
-
-        loveEmoticonButton.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            e.onNext(Emoticons.LOVE);
-          }
-        });
-        hahaEmoticonButton.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            e.onNext(Emoticons.HAHA);
-          }
-        });
-
-        wowEmoticonButton.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            e.onNext(Emoticons.WOW);
-          }
-        });
-        sadEmoticonButton.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            e.onNext(Emoticons.SAD);
-          }
-        });
-
-        angryEmoticonButton.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            e.onNext(Emoticons.ANGRY);
-          }
-        });
+        convertClickEventToStream(e);
       }
     };
-
-
+    //Give the backpressure strategey as buffer, so that the click items do not drop.
     Flowable emoticonsFlowable = Flowable.create(flowableOnSubscribe, BackpressureStrategy.BUFFER);
     Flowable<Timed> emoticonsTimedFlowable = emoticonsFlowable.timestamp();
-    subscriber = new Subscriber() {
+    subscriber = getSubscriber();
+    emoticonsTimedFlowable.subscribeWith(subscriber);
+  }
+
+  private Subscriber getSubscriber() {
+    return new Subscriber() {
       @Override
       public void onSubscribe(Subscription s) {
         emoticonSubscription = s;
@@ -117,23 +96,23 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
         switch (emoticons) {
           case LIKE:
             System.out.println("inside like");
-            likeEmoticonFlow.startAnimation(animSlide);
+            likeEmoticonFlow.startAnimation(animation);
             break;
           case LOVE:
             System.out.println("inside love");
-            loveEmoticonFlow.startAnimation(animSlide);
+            loveEmoticonFlow.startAnimation(animation);
             break;
           case HAHA:
-            hahaEmoticonFlow.startAnimation(animSlide);
+            hahaEmoticonFlow.startAnimation(animation);
             break;
           case WOW:
-            wowEmoticonFlow.startAnimation(animSlide);
+            wowEmoticonFlow.startAnimation(animation);
             break;
           case SAD:
-            sadEmoticonFlow.startAnimation(animSlide);
+            sadEmoticonFlow.startAnimation(animation);
             break;
           case ANGRY:
-            angryEmoticonFlow.startAnimation(animSlide);
+            angryEmoticonFlow.startAnimation(animation);
             break;
         }
 
@@ -164,6 +143,47 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
 
       }
     };
-    emoticonsTimedFlowable.subscribeWith(subscriber);
+  }
+
+  private void convertClickEventToStream(final FlowableEmitter e) {
+    likeEmoticonButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        e.onNext(Emoticons.LIKE);
+      }
+    });
+
+    loveEmoticonButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        e.onNext(Emoticons.LOVE);
+      }
+    });
+    hahaEmoticonButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        e.onNext(Emoticons.HAHA);
+      }
+    });
+
+    wowEmoticonButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        e.onNext(Emoticons.WOW);
+      }
+    });
+    sadEmoticonButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        e.onNext(Emoticons.SAD);
+      }
+    });
+
+    angryEmoticonButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        e.onNext(Emoticons.ANGRY);
+      }
+    });
   }
 }
