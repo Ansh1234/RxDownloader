@@ -10,30 +10,110 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.anshul.rxdownloader.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/like_emoticon_flow"
+            android:src="@drawable/like"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/love_emoticon_flow"
+            android:src="@drawable/love"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/haha_emoticon_flow"
+            android:src="@drawable/like"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/wow_emoticon_flow"
+            android:src="@drawable/like"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/sad_emoticon_flow"
+            android:src="@drawable/like"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/angry_emoticon_flow"
+            android:src="@drawable/like"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
-        <Button
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/like_emoticon"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_weight="1"
-            android:text="Like"
-            android:id="@+id/like_button"/>
-        <Button
+            android:background="@null"
+            android:src="@drawable/like" />
+
+        <ImageButton
+            android:id="@+id/love_emoticon"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_weight="1"
-            android:text="Comment"
-            android:id="@+id/comment_button"/>
+            android:background="@null"
+            android:src="@drawable/love" />
+
+        <ImageButton
+            android:id="@+id/haha_emoticon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/like" />
+
+        <ImageButton
+            android:id="@+id/wow_emoticon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/love" />
+
+        <ImageButton
+            android:id="@+id/sad_emoticon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/like" />
+
+        <ImageButton
+            android:id="@+id/angry_emoticon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/love" />
     </LinearLayout>
 
 </RelativeLayout>
