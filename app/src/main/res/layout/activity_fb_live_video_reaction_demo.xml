@@ -8,61 +8,13 @@
     tools:context="com.example.anshul.rxdownloader.MainActivity">
 
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/emoticons_flowing_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="400dp"
         android:layout_above="@+id/emoticons_view"
-        android:background="@drawable/background"
-        android:orientation="vertical">
+        android:orientation="vertical"></RelativeLayout>
 
-        <ImageView
-            android:id="@+id/like_emoticon_flow"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentRight="true"
-            android:visibility="invisible"
-            android:src="@drawable/like" />
-
-        <ImageView
-            android:id="@+id/love_emoticon_flow"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="invisible"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/love" />
-
-        <ImageView
-            android:id="@+id/haha_emoticon_flow"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="invisible"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/haha" />
-
-        <ImageView
-            android:id="@+id/wow_emoticon_flow"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="invisible"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/wow" />
-
-        <ImageView
-            android:id="@+id/sad_emoticon_flow"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="invisible"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/sad" />
-
-        <ImageView
-            android:id="@+id/angry_emoticon_flow"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="invisible"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/angry" />
-    </LinearLayout>
 
 
     <LinearLayout
@@ -70,64 +22,64 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
-        android:gravity="bottom"
-        android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:gravity="bottom"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/like_emoticon"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_weight="1"
             android:background="@null"
-            android:src="@drawable/like" />
+            android:src="@drawable/like_48" />
 
         <ImageView
             android:id="@+id/love_emoticon"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_weight="1"
             android:background="@null"
-            android:src="@drawable/love" />
+            android:src="@drawable/love_48" />
 
         <ImageView
             android:id="@+id/haha_emoticon"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_weight="1"
             android:background="@null"
-            android:src="@drawable/haha" />
+            android:src="@drawable/haha_48" />
 
         <ImageView
             android:id="@+id/wow_emoticon"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_weight="1"
             android:background="@null"
-            android:src="@drawable/wow" />
+            android:src="@drawable/wow_48" />
 
         <ImageView
             android:id="@+id/sad_emoticon"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_weight="1"
             android:background="@null"
-            android:src="@drawable/sad" />
+            android:src="@drawable/sad_48" />
 
         <ImageView
             android:id="@+id/angry_emoticon"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_weight="1"
             android:background="@null"
-            android:src="@drawable/angry" />
+            android:src="@drawable/angry_48" />
     </LinearLayout>
 
 </RelativeLayout>
