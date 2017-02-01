@@ -53,7 +53,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
   ImageView sadEmoticonFlow;
   @BindView(R.id.angry_emoticon_flow)
   ImageView angryEmoticonFlow;
-  private Animation animation;
+  private Animation animation, bounceAnimation;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
 
     animation = AnimationUtils.loadAnimation(getApplicationContext(),
         R.anim.slide);
-
+    bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.sequential);
     FlowableOnSubscribe flowableOnSubscribe = new FlowableOnSubscribe() {
       @Override
       public void subscribe(final FlowableEmitter e) throws Exception {
@@ -161,6 +161,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     likeEmoticonButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        likeEmoticonButton.startAnimation(bounceAnimation);
         e.onNext(Emoticons.LIKE);
       }
     });
@@ -168,12 +169,14 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     loveEmoticonButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        loveEmoticonButton.startAnimation(bounceAnimation);
         e.onNext(Emoticons.LOVE);
       }
     });
     hahaEmoticonButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        hahaEmoticonButton.startAnimation(bounceAnimation);
         e.onNext(Emoticons.HAHA);
       }
     });
@@ -181,6 +184,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     wowEmoticonButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        wowEmoticonButton.startAnimation(bounceAnimation);
         e.onNext(Emoticons.WOW);
       }
     });
@@ -188,6 +192,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     sadEmoticonButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        sadEmoticonButton.startAnimation(bounceAnimation);
         e.onNext(Emoticons.SAD);
       }
     });
@@ -195,6 +200,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     angryEmoticonButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        angryEmoticonButton.startAnimation(bounceAnimation);
         e.onNext(Emoticons.ANGRY);
       }
     });
