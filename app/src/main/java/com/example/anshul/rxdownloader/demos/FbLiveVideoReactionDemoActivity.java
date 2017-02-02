@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.example.anshul.rxdownloader.R;
@@ -16,6 +15,8 @@ import com.example.anshul.rxdownloader.R;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -51,6 +52,8 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
   RelativeLayout emoticonsFlowingContainer;
   private int index = 0;
   private int[] sizes = new int[]{24, 32, 48};
+  @BindView(R.id.custom_view)
+  CustomDrawableView customDrawableView;
 
 
   @Override
@@ -72,6 +75,15 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     Flowable<Timed> emoticonsTimedFlowable = emoticonsFlowable.timestamp();
     subscriber = getSubscriber();
     emoticonsTimedFlowable.subscribeWith(subscriber);
+    customDrawableView.initView(this);
+    List<Integer> list = new ArrayList<>();
+    list.add(1);
+    list.add(2);
+    list.add(23);
+    for(int i=0;i<list.size();i++){
+      System.out.println(list.remove(i));
+      System.out.println(list);
+    }
   }
 
   private Subscriber getSubscriber() {
@@ -101,6 +113,7 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
         Emoticons emoticons = (Emoticons) ((Timed) o).value();
         switch (emoticons) {
           case LIKE:
+            customDrawableView.addView(Emoticons.LIKE,Sizes.FORTYEIGHT);
             name = "like_" + sizes[index % 3];
             break;
           case LOVE:
