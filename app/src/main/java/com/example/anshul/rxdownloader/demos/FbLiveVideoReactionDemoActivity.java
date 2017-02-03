@@ -4,20 +4,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.example.anshul.rxdownloader.R;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,20 +41,21 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
   ImageView sadEmoticonButton;
   @BindView(R.id.angry_emoticon)
   ImageView angryEmoticonButton;
-  private Animation animation, bounceAnimation;
-  @BindView(R.id.emoticons_flowing_container)
-  RelativeLayout emoticonsFlowingContainer;
+  private Animation bounceAnimation;
   @BindView(R.id.custom_view)
-  CustomDrawableView customDrawableView;
+  EmoticonsView emoticonsView;
 
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    //Set the view and do all the necessary init.
     setContentView(R.layout.activity_fb_live_video_reaction_demo);
     ButterKnife.bind(this);
-
+    emoticonsView.initView(this);
     bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.sequential);
+
+    //Create an instance of FlowableOnSubscribe which will convert click events to streams
     FlowableOnSubscribe flowableOnSubscribe = new FlowableOnSubscribe() {
       @Override
       public void subscribe(final FlowableEmitter e) throws Exception {
@@ -69,10 +64,11 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     };
     //Give the backpressure strategey as BUFFER, so that the click items do not drop.
     Flowable emoticonsFlowable = Flowable.create(flowableOnSubscribe, BackpressureStrategy.BUFFER);
+    //Convert the stream to a timed stream, as we require the timestamp of each event
     Flowable<Timed> emoticonsTimedFlowable = emoticonsFlowable.timestamp();
     subscriber = getSubscriber();
+    //Subscribe
     emoticonsTimedFlowable.subscribeWith(subscriber);
-    customDrawableView.initView(this);
   }
 
   private Subscriber getSubscriber() {
@@ -92,22 +88,22 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
         Emoticons emoticons = (Emoticons) ((Timed) o).value();
         switch (emoticons) {
           case LIKE:
-            customDrawableView.addView(Emoticons.LIKE);
+            emoticonsView.addView(Emoticons.LIKE);
             break;
           case LOVE:
-            customDrawableView.addView(Emoticons.LOVE);
+            emoticonsView.addView(Emoticons.LOVE);
             break;
           case HAHA:
-            customDrawableView.addView(Emoticons.HAHA);
+            emoticonsView.addView(Emoticons.HAHA);
             break;
           case WOW:
-            customDrawableView.addView(Emoticons.WOW);
+            emoticonsView.addView(Emoticons.WOW);
             break;
           case SAD:
-            customDrawableView.addView(Emoticons.SAD);
+            emoticonsView.addView(Emoticons.SAD);
             break;
           case ANGRY:
-            customDrawableView.addView(Emoticons.ANGRY);
+            emoticonsView.addView(Emoticons.ANGRY);
             break;
         }
 
@@ -130,12 +126,14 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
 
       @Override
       public void onError(Throwable t) {
-
+        //Do nothing
       }
 
       @Override
       public void onComplete() {
-
+        if (emoticonSubscription != null) {
+          emoticonSubscription.cancel();
+        }
       }
     };
   }

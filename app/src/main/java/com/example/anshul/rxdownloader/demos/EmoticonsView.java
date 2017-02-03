@@ -23,25 +23,26 @@ import java.util.Random;
  * Created by anshul on 2/2/17.
  */
 
-public class CustomDrawableView extends View {
+public class EmoticonsView extends View {
   private Paint mPaint;
   private Path mAnimPath;
   private Matrix mMatrix;
   private Bitmap mLike48, mLike32, mLike24, mLove48, mLove32, mLove24, mHaha48, mHaha32, mHaha24,
       mWow48, mWow32, mWow24, mSad48, mSad32, mSad24, mAngry48, mAngry32, mAngry24;
   private ArrayList<LiveEmoticon> mLiveEmoticons = new ArrayList<>();
+  private final int X_CORDINATE_STEP = 10, Y_CORDINATE_OFFSET = 100, Y_CORDINATE_RANGE = 200;
   private int mScreenWidth;
 
-  public CustomDrawableView(Context activity) {
+  public EmoticonsView(Context activity) {
     super(activity);
 
   }
 
-  public CustomDrawableView(Context activity, AttributeSet attrs) {
+  public EmoticonsView(Context activity, AttributeSet attrs) {
     super(activity, attrs);
   }
 
-  public CustomDrawableView(Context activity, AttributeSet attrs, int defStyleAttr) {
+  public EmoticonsView(Context activity, AttributeSet attrs, int defStyleAttr) {
     super(activity, attrs, defStyleAttr);
   }
 
@@ -94,11 +95,12 @@ public class CustomDrawableView extends View {
         continue;
       }
       LiveEmoticon liveEmoticon = (LiveEmoticon) object;
-      Integer xCordinate = liveEmoticon.getxCordinate() + 10;
+      Integer xCordinate = liveEmoticon.getxCordinate() - X_CORDINATE_STEP;
+      Integer yCordinate = liveEmoticon.getyCordinate();
       liveEmoticon.setxCordinate(xCordinate);
-      if (xCordinate < mScreenWidth) {
+      if (xCordinate > 0) {
         mMatrix.reset();
-        mMatrix.postTranslate(xCordinate, 100);
+        mMatrix.postTranslate(xCordinate, yCordinate);
         resizeImageSizeBasedOnXCordinates(canvas, liveEmoticon);
         invalidate();
       } else {
@@ -154,9 +156,9 @@ public class CustomDrawableView extends View {
         break;
     }
 
-    if (xCordinate < mScreenWidth / 2) {
+    if (xCordinate > mScreenWidth / 2) {
       canvas.drawBitmap(bitMap48, mMatrix, null);
-    } else if (xCordinate < 3 / 4 * mScreenWidth) {
+    } else if (xCordinate > mScreenWidth / 4) {
       canvas.drawBitmap(bitMap32, mMatrix, null);
     } else {
       canvas.drawBitmap(bitMap24, mMatrix, null);
@@ -164,8 +166,8 @@ public class CustomDrawableView extends View {
   }
 
   public void addView(Emoticons emoticons) {
-    int startXCordinate = 0;
-    int startYCordinate = new Random().nextInt(300) + 100;
+    int startXCordinate = mScreenWidth;
+    int startYCordinate = new Random().nextInt(Y_CORDINATE_RANGE) + Y_CORDINATE_OFFSET;
     LiveEmoticon liveEmoticon = new LiveEmoticon(emoticons, startXCordinate, startYCordinate);
     mLiveEmoticons.add(liveEmoticon);
     invalidate();
