@@ -34,7 +34,7 @@ import io.reactivex.schedulers.Timed;
 public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
   private Subscription emoticonSubscription;
   private Subscriber subscriber;
-  private final int MINIMUM_DURATION_BETWEEN_EMOTICONS = 200; // in milliseconds
+  private final int MINIMUM_DURATION_BETWEEN_EMOTICONS = 400; // in milliseconds
   @BindView(R.id.like_emoticon)
   ImageView likeEmoticonButton;
   @BindView(R.id.love_emoticon)
@@ -50,8 +50,6 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
   private Animation animation, bounceAnimation;
   @BindView(R.id.emoticons_flowing_container)
   RelativeLayout emoticonsFlowingContainer;
-  private int index = 0;
-  private int[] sizes = new int[]{24, 32, 48};
   @BindView(R.id.custom_view)
   CustomDrawableView customDrawableView;
 
@@ -61,7 +59,6 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_fb_live_video_reaction_demo);
     ButterKnife.bind(this);
-
 
     bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.sequential);
     FlowableOnSubscribe flowableOnSubscribe = new FlowableOnSubscribe() {
@@ -76,14 +73,6 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
     subscriber = getSubscriber();
     emoticonsTimedFlowable.subscribeWith(subscriber);
     customDrawableView.initView(this);
-    List<Integer> list = new ArrayList<>();
-    list.add(1);
-    list.add(2);
-    list.add(23);
-    for(int i=0;i<list.size();i++){
-      System.out.println(list.remove(i));
-      System.out.println(list);
-    }
   }
 
   private Subscriber getSubscriber() {
@@ -99,60 +88,28 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
         if (o == null || !(o instanceof Timed)) {
           return;
         }
-        System.out.println("The object is " + o.toString());
-
-
-        ImageView imageView = new ImageView(FbLiveVideoReactionDemoActivity.this);
-
-
-        String name = "like_" + sizes[index % 3];
-
-        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),
-            R.anim.slide);
 
         Emoticons emoticons = (Emoticons) ((Timed) o).value();
         switch (emoticons) {
           case LIKE:
             customDrawableView.addView(Emoticons.LIKE);
-            name = "like_" + sizes[index % 3];
             break;
           case LOVE:
             customDrawableView.addView(Emoticons.LOVE);
-            name = "love_" + sizes[index % 3];
             break;
           case HAHA:
-            name = "haha_" + sizes[index % 3];
+            customDrawableView.addView(Emoticons.HAHA);
             break;
           case WOW:
-            name = "wow_" + sizes[index % 3];
+            customDrawableView.addView(Emoticons.WOW);
             break;
           case SAD:
-            name = "sad_" + sizes[index % 3];
+            customDrawableView.addView(Emoticons.SAD);
             break;
           case ANGRY:
-            name = "angry_" + sizes[index % 3];
+            customDrawableView.addView(Emoticons.ANGRY);
             break;
         }
-
-        index++;
-        int resource =
-            getResources().getIdentifier(name, "drawable", "com.example.anshul.rxdownloader");
-        imageView.setImageResource(resource);
-
-
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        Random random = new Random();
-        int margin = random.nextInt(350);
-        layoutParams.setMargins(0, margin, 0, 0);
-        imageView.setLayoutParams(layoutParams);
-        emoticonsFlowingContainer.addView(imageView);
-
-        imageView.startAnimation(animation);
-        animation.setAnimationListener(new CustomAnimationListener(emoticonsFlowingContainer,
-            imageView));
-
 
         if (o instanceof Timed) {
           long currentTimeStamp = System.currentTimeMillis();
