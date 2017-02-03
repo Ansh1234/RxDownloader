@@ -10,6 +10,12 @@ public class LiveEmoticon {
   private int xCordinate;
   private int yCordinate;
 
+  public LiveEmoticon(Emoticons emoticons, int xCordinate, int yCordinate) {
+    this.emoticons = emoticons;
+    this.xCordinate = xCordinate;
+    this.yCordinate = yCordinate;
+  }
+
   public Emoticons getEmoticons() {
     return emoticons;
   }

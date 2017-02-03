@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.drawable.ShapeDrawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -24,12 +23,11 @@ import java.util.ListIterator;
  */
 
 public class CustomDrawableView extends View {
-  private ShapeDrawable mDrawable;
   private Paint mPaint;
   private Path mAnimPath;
   private Matrix mMatrix;
-  private Bitmap mLike48, mLike32, mLike24;
-  private ArrayList<Integer> mLikeXCordinates = new ArrayList<>();
+  private Bitmap mLike48, mLike32, mLike24, mLove48, mLove32, mLove24;
+  private ArrayList<LiveEmoticon> mLiveEmoticons = new ArrayList<>();
   private int mScreenWidth;
 
   public CustomDrawableView(Context activity) {
@@ -60,22 +58,30 @@ public class CustomDrawableView extends View {
     mLike48 = BitmapFactory.decodeResource(res, R.drawable.like_48);
     mLike32 = BitmapFactory.decodeResource(res, R.drawable.like_32);
     mLike24 = BitmapFactory.decodeResource(res, R.drawable.like_24);
+    mLove48 = BitmapFactory.decodeResource(res, R.drawable.love_48);
+    mLove32 = BitmapFactory.decodeResource(res, R.drawable.love_32);
+    mLove24 = BitmapFactory.decodeResource(res, R.drawable.love_24);
   }
 
   protected void onDraw(Canvas canvas) {
     canvas.drawPath(mAnimPath, mPaint);
-    drawAllCurrentEmoticons(canvas);
+    drawAllLiveEmoticons(canvas);
   }
 
-  private void drawAllCurrentEmoticons(Canvas canvas) {
-    ListIterator iterator = mLikeXCordinates.listIterator();
+  private void drawAllLiveEmoticons(Canvas canvas) {
+    ListIterator iterator = mLiveEmoticons.listIterator();
     while (iterator.hasNext()) {
-      Integer xCordinate = (Integer) iterator.next() + 10;
+      Object object = iterator.next();
+      if (!(object instanceof LiveEmoticon)) {
+        continue;
+      }
+      LiveEmoticon liveEmoticon = (LiveEmoticon) object;
+      Integer xCordinate = liveEmoticon.getxCordinate() + 10;
+      liveEmoticon.setxCordinate(xCordinate);
       if (xCordinate < mScreenWidth) {
-        iterator.set(xCordinate);
         mMatrix.reset();
         mMatrix.postTranslate(xCordinate, 100);
-        resizeImageSizeBasedOnXCordinates(canvas, xCordinate, mLike48, mLike32, mLike24);
+        resizeImageSizeBasedOnXCordinates(canvas, liveEmoticon);
         invalidate();
       } else {
         iterator.remove();
@@ -83,8 +89,33 @@ public class CustomDrawableView extends View {
     }
   }
 
-  private void resizeImageSizeBasedOnXCordinates(Canvas canvas, int xCordinate, Bitmap bitMap48,
-                                                 Bitmap bitMap32, Bitmap bitMap24) {
+  private void resizeImageSizeBasedOnXCordinates(Canvas canvas, LiveEmoticon liveEmoticon) {
+    if (liveEmoticon == null) {
+      return;
+    }
+    int xCordinate = liveEmoticon.getxCordinate();
+    Bitmap bitMap48 = null;
+    Bitmap bitMap32 = null;
+    Bitmap bitMap24 = null;
+
+    Emoticons emoticons = liveEmoticon.getEmoticons();
+    if (emoticons == null) {
+      return;
+    }
+
+    switch (emoticons) {
+      case LIKE:
+        bitMap48 = mLike48;
+        bitMap32 = mLike32;
+        bitMap24 = mLike24;
+        break;
+      case LOVE:
+        bitMap48 = mLike48;
+        bitMap32 = mLike32;
+        bitMap24 = mLike24;
+        break;
+    }
+
     if (xCordinate < mScreenWidth / 2) {
       canvas.drawBitmap(bitMap48, mMatrix, null);
     } else if (xCordinate < 3 / 4 * mScreenWidth) {
@@ -94,22 +125,9 @@ public class CustomDrawableView extends View {
     }
   }
 
-  public void addView(Emoticons emoticons, Sizes sizes) {
-    switch (emoticons) {
-      case LIKE:
-        mLikeXCordinates.add(0);
-        invalidate();
-        break;
-      case LOVE:
-        break;
-      case HAHA:
-        break;
-      case WOW:
-        break;
-      case SAD:
-        break;
-      case ANGRY:
-        break;
-    }
+  public void addView(Emoticons emoticons) {
+    LiveEmoticon liveEmoticon = new LiveEmoticon(emoticons, 0, 0);
+    mLiveEmoticons.add(liveEmoticon);
+    invalidate();
   }
 }

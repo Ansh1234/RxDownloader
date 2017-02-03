@@ -113,10 +113,11 @@ public class FbLiveVideoReactionDemoActivity extends AppCompatActivity {
         Emoticons emoticons = (Emoticons) ((Timed) o).value();
         switch (emoticons) {
           case LIKE:
-            customDrawableView.addView(Emoticons.LIKE,Sizes.FORTYEIGHT);
+            customDrawableView.addView(Emoticons.LIKE);
             name = "like_" + sizes[index % 3];
             break;
           case LOVE:
+            customDrawableView.addView(Emoticons.LOVE);
             name = "love_" + sizes[index % 3];
             break;
           case HAHA:
