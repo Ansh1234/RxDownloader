@@ -17,6 +17,7 @@ import android.view.View;
 import com.example.anshul.rxdownloader.R;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 /**
  * Created by anshul on 2/2/17.
@@ -62,29 +63,35 @@ public class CustomDrawableView extends View {
   }
 
   protected void onDraw(Canvas canvas) {
-    System.out.println("onDraw");
     canvas.drawPath(mAnimPath, mPaint);
-    ArrayList<Integer> toRemoveIndexes = new ArrayList<>();
-    for (int i = 0; i < mLikeXCordinates.size(); i++) {
-      System.out.println("the value of i is " + i);
-      int xCordinate = mLikeXCordinates.get(i) + 10;
+    drawAllCurrentEmoticons(canvas);
+  }
+
+  private void drawAllCurrentEmoticons(Canvas canvas) {
+    ListIterator iterator = mLikeXCordinates.listIterator();
+    while (iterator.hasNext()) {
+      Integer xCordinate = (Integer) iterator.next() + 10;
       if (xCordinate < mScreenWidth) {
-        mLikeXCordinates.remove(i);
-        mLikeXCordinates.add(i, xCordinate);
-        System.out.println("the value of xcordinate is " + xCordinate);
-        System.out.println("the size is " + mLikeXCordinates.size());
+        iterator.set(xCordinate);
         mMatrix.reset();
         mMatrix.postTranslate(xCordinate, 100);
-        canvas.drawBitmap(mLike48, mMatrix, null);
+        resizeImageSizeBasedOnXCordinates(canvas, xCordinate, mLike48, mLike32, mLike24);
         invalidate();
       } else {
-    //    toRemoveIndexes.add(i);
-      //  System.out.println(mLikeXCordinates.remove(i));
-        System.out.println(
-            "removing from the list : size is " + mLikeXCordinates.size() + mLikeXCordinates);
+        iterator.remove();
       }
     }
+  }
 
+  private void resizeImageSizeBasedOnXCordinates(Canvas canvas, int xCordinate, Bitmap bitMap48,
+                                                 Bitmap bitMap32, Bitmap bitMap24) {
+    if (xCordinate < mScreenWidth / 2) {
+      canvas.drawBitmap(bitMap48, mMatrix, null);
+    } else if (xCordinate < 3 / 4 * mScreenWidth) {
+      canvas.drawBitmap(bitMap32, mMatrix, null);
+    } else {
+      canvas.drawBitmap(bitMap24, mMatrix, null);
+    }
   }
 
   public void addView(Emoticons emoticons, Sizes sizes) {
