@@ -19,7 +19,8 @@ public class ImagesListActivity extends Activity {
     String[] imagesDisplayNamesList = getResources().getStringArray(R.array
         .image_display_names_list);
     String[] imageDownloadUrlList = getResources().getStringArray(R.array.image_download_url_list);
-    ImagesListAdapter adapter = new ImagesListAdapter(imagesDisplayNamesList, imageDownloadUrlList);
+    ImagesListAdapter adapter = new ImagesListAdapter(this,imagesDisplayNamesList,
+        imageDownloadUrlList);
     imagesListView.setLayoutManager(new LinearLayoutManager(this));
     imagesListView.setAdapter(adapter);
   }

@@ -6,11 +6,27 @@
     <string-array name="image_display_names_list">
         <item>Tree</item>
         <item>Satellite</item>
+        <item>Moon</item>
+        <item>Arrays</item>
+        <item>Computers</item>
+        <item>Laptops</item>
+        <item>Phone</item>
+        <item>Laptop</item>
+        <item>Bottle</item>
+        <item>Cable</item>
     </string-array>
 
     <!-- The list of urls to be downloaded-->
     <string-array name="image_download_url_list">
-        <item>http://www.kenrockwell.com/contax/images/g2/examples/31120037-5mb.jpg></item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
+        <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
         <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
     </string-array>
 </resources>
