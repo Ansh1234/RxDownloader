@@ -52,7 +52,8 @@ public class RxDownloadManagerHelper {
       System.out.println("bytes total " + bytesTotal);
       progress = (int) ((bytesDownloaded / bytesTotal) * 100);
       Log.d("DownloadManager percent", progress + "");
-      percentFlowableEmiitter.onNext(progress);
+      downloadableObject.setDownloadPercent(progress);
+      percentFlowableEmiitter.onNext(downloadableObject);
       switch (downloadStatus) {
         case DownloadManager.STATUS_FAILED:
           break;

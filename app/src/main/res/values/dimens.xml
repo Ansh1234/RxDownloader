@@ -3,7 +3,10 @@
     <dimen name="layout_margin">10dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="icon_image_download_width">20dp</dimen>
-    <dimen name="icon_image_download_height">20dp</dimen>
+    <dimen name="icon_image_download_width">60dp</dimen>
+    <dimen name="icon_image_download_height">60dp</dimen>
     <dimen name="image_name_text_size">18dp</dimen>
+    <dimen name="image_width">120dp</dimen>
+    <dimen name="image_height">100dp</dimen>
+    <dimen name="image_margin">10dp</dimen>
 </resources>

@@ -9,6 +9,7 @@ public class DownloadableObject {
   private ImageDetailsViewHolder imageDetailsViewHolder;
   private long downloadId;
   private String downloadImageUrl;
+  private long downloadPercent;
 
   public ImageDetailsViewHolder getImageDetailsViewHolder() {
     return imageDetailsViewHolder;
@@ -33,5 +34,13 @@ public class DownloadableObject {
 
   public void setDownloadImageUrl(String downloadImageUrl) {
     this.downloadImageUrl = downloadImageUrl;
+  }
+
+  public long getDownloadPercent() {
+    return downloadPercent;
+  }
+
+  public void setDownloadPercent(long downloadPercent) {
+    this.downloadPercent = downloadPercent;
   }
 }

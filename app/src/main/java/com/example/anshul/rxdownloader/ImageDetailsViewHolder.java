@@ -1,27 +1,18 @@
 package com.example.anshul.rxdownloader;
 
-import android.app.DownloadManager;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.ArcShape;
+import android.graphics.drawable.shapes.OvalShape;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.FlowableEmitter;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by anshul on 15/1/17.
@@ -32,7 +23,7 @@ public class ImageDetailsViewHolder extends RecyclerView.ViewHolder
 
   private TextView imageName;
   private String imageDownloadUrl;
-  private ImageView imageDownloadIcon;
+  private SongDownloaderIconView imageDownloadIcon;
   private Context context;
   private final String TAG = "DownloadManager";
   private ProgressBar progressBar;
@@ -47,9 +38,10 @@ public class ImageDetailsViewHolder extends RecyclerView.ViewHolder
     }
 
     context = itemView.getContext();
-    imageName = (TextView) itemView.findViewById(R.id.image_name);
-    imageDownloadIcon = (ImageView) itemView.findViewById(R.id.icon_image_download);
+    imageName = (TextView) itemView.findViewById(R.id.music_name);
+    imageDownloadIcon = (SongDownloaderIconView) itemView.findViewById(R.id.icon_image_download);
     imageDownloadIcon.setOnClickListener(this);
+    imageDownloadIcon.bringToFront();
     progressBar = (ProgressBar) itemView.findViewById(R.id.image_download_progress_bar);
     this.flowableEmitter = flowableEmitter;
   }
@@ -61,9 +53,38 @@ public class ImageDetailsViewHolder extends RecyclerView.ViewHolder
 
   @Override
   public void onClick(View v) {
+    setImageToWaitingState();
     DownloadableObject downloadableObject = new DownloadableObject();
     downloadableObject.setImageDetailsViewHolder(this);
     downloadableObject.setDownloadImageUrl(imageDownloadUrl);
     flowableEmitter.onNext(downloadableObject);
   }
+
+  public void setImageToWaitingState() {
+    imageDownloadIcon.updateDownloadingStatus(DownloadingStatus.WAITING);
+  }
+
+  public void setImageToCompletedState() {
+    imageDownloadIcon.updateDownloadingStatus(DownloadingStatus.DOWNLOADED);
+  }
+
+  public void setImageToProgressState() {
+    imageDownloadIcon.updateDownloadingStatus(DownloadingStatus.IN_PROGRESS);
+  }
+
+
+//  public void setImageToProgressState() {
+//    GradientDrawable drawable = new GradientDrawable();
+//    drawable.setColor(Color.TRANSPARENT);
+//    drawable.setShape(GradientDrawable.OVAL);
+//    drawable.setStroke(2, Color.parseColor("#ff0000"));
+//    drawable.setSize(2 * 10, 2 * 10);
+//    imageDownloadIcon.setImageDrawable(drawable);
+//
+//    ArcShape shape = new ArcShape(90, 90);
+//    ShapeDrawable shapeDrawable = new ShapeDrawable(shape);
+//    shapeDrawable.getPaint().setColor(Color.parseColor("#ff0000"));
+//    imageDownloadIcon.setBackgroundDrawable(shapeDrawable);
+//
+//  }
 }

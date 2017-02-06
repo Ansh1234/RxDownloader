@@ -66,10 +66,16 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
       @Override
       public void onNext(Object value) {
         System.out.println("value is " + value);
-        Integer val = (Integer) value;
-        if (val == 100) {
+        if (!(value instanceof DownloadableObject)) {
+          return;
+        }
+        Integer downloadPercent = (int)((DownloadableObject) value).getDownloadPercent();
+        if (downloadPercent == 100) {
           currentCount--;
           subscription.request(MAX_COUNT - currentCount);
+          ImageDetailsViewHolder imageDetailsViewHolder = ((DownloadableObject) value)
+              .getImageDetailsViewHolder();
+          imageDetailsViewHolder.setImageToCompletedState();
         }
       }
 
@@ -110,6 +116,7 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
 
         currentCount++;
         DownloadableObject downloadableObject = (DownloadableObject) o;
+        downloadableObject.getImageDetailsViewHolder().setImageToProgressState();
         System.out.println("The value of onNext is " + downloadableObject);
         long downloadId = RxDownloadManagerHelper.downloadImage(downloadManager, (
             downloadableObject.getDownloadImageUrl()));
