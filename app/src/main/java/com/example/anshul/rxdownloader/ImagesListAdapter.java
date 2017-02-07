@@ -2,6 +2,7 @@ package com.example.anshul.rxdownloader;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v7.internal.app.ToolbarActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,15 +31,19 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
 
   private final String[] imageNames;
   private final String[] imageDownloadUrls;
+  private final TypedArray itemDownloadCovers;
+
   private int currentCount = 0;
   private DownloadManager downloadManager;
   private static final String TAG = ImagesListAdapter.class.getSimpleName();
   private ItemDownloadPercentObserver mItemDownloadPercentObserver;
   private DownloadRequestsSubscriber mDownloadRequestsSubscriber;
 
-  public ImagesListAdapter(Context context, String[] imageUrls, String[] imageDownloadUrls) {
+  public ImagesListAdapter(Context context, String[] imageUrls, String[] imageDownloadUrls, TypedArray
+      itemDownloadCovers) {
     this.imageNames = imageUrls;
     this.imageDownloadUrls = imageDownloadUrls;
+    this.itemDownloadCovers = itemDownloadCovers;
     this.downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
     mItemDownloadPercentObserver = new ItemDownloadPercentObserver(this);
     mItemDownloadPercentObserver.init();
@@ -78,7 +83,7 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     if (holder instanceof ItemDetailsViewHolder) {
       ((ItemDetailsViewHolder) holder).updateImageDetails(imageNames[position],
-          imageDownloadUrls[position]);
+          imageDownloadUrls[position], itemDownloadCovers.getResourceId(position,-1));
     }
   }
 

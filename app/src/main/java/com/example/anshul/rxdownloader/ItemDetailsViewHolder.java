@@ -2,6 +2,7 @@ package com.example.anshul.rxdownloader;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import io.reactivex.FlowableEmitter;
@@ -17,6 +18,7 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
   private String imageDownloadUrl;
   private SongDownloaderIconView imageDownloadIcon;
   private FlowableEmitter flowableEmitter;
+  private ImageView itemCoverIcon;
 
   public ItemDetailsViewHolder(View itemView, FlowableEmitter flowableEmitter) {
     super(itemView);
@@ -27,13 +29,15 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
 
     imageName = (TextView) itemView.findViewById(R.id.item_name);
     imageDownloadIcon = (SongDownloaderIconView) itemView.findViewById(R.id.icon_image_download);
+    itemCoverIcon = (ImageView) itemView.findViewById(R.id.icon_item_cover);
     imageDownloadIcon.init();
     imageDownloadIcon.setOnClickListener(this);
     this.flowableEmitter = flowableEmitter;
   }
 
-  public void updateImageDetails(String name, String imageDownloadUrl) {
+  public void updateImageDetails(String name, String imageDownloadUrl, int drawableId) {
     imageName.setText(name);
+    itemCoverIcon.setImageResource(drawableId);
     this.imageDownloadUrl = imageDownloadUrl;
   }
 

@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -21,13 +22,12 @@ public class SongDownloaderIconView extends View {
   private final double ANGLE_MULTIPLER = 3.6;
   private final int TOTAL_ANGLE = 360;
   private final int STARTING_ANGLE = -90;
-  private final int RECTANGLE_SIZE = 100;
-  private final int RECTANGE_OFFSET = 0;
-  private final int TEXT_OFFSET = 50;
+  private final int RECTANGLE_SIZE = 60;
   private int rotateAngle = 0;
   private int progress = 0;
   private Paint mPaint;
   private Bitmap mIconImageNotDownloaded, mIconImageWaiting, mIconImageCompleted;
+  private final int TRANSLATE_DISTANCE = 100;
 
   private DownloadingStatus downloadingStatus = DownloadingStatus.NOT_DOWNLOADED;
   private Bitmap bitmap;
@@ -97,7 +97,9 @@ public class SongDownloaderIconView extends View {
     // to 180 degree which is half circle.
     double downloadedPercentAngle = progress * ANGLE_MULTIPLER;
     double notDownloadedPercentAngle = TOTAL_ANGLE - downloadedPercentAngle;
-    RectF rectF = new RectF(RECTANGE_OFFSET, RECTANGE_OFFSET, RECTANGLE_SIZE, RECTANGLE_SIZE);
+    float dX = (canvas.getWidth() - RECTANGLE_SIZE) / 2;
+    float dY = (canvas.getHeight() - RECTANGLE_SIZE) / 2;
+    RectF rectF = new RectF(dX, dY, RECTANGLE_SIZE + dX, RECTANGLE_SIZE + dY);
 
     //Draw the downloaded arc.
     mPaint.setStyle(Paint.Style.STROKE);
@@ -111,17 +113,21 @@ public class SongDownloaderIconView extends View {
     mPaint.setStrokeWidth(CIRCLE_STROKE_WIDTH);
     canvas.drawArc(rectF, (float) (downloadedPercentAngle + STARTING_ANGLE),
         (float) notDownloadedPercentAngle, false, mPaint);
-    mPaint.setColor(Color.WHITE);
 
-    //Draw text within the arc.
+
+    // Draw text within the arc.
     mPaint.setStyle(Paint.Style.FILL);
     mPaint.setColor(Color.BLACK);
     mPaint.setTextSize(getResources().getDimension(R.dimen.image_icon_progress_text_size));
     mPaint.setTextAlign(Paint.Align.CENTER);
-    canvas.drawText(Integer.toString(progress), TEXT_OFFSET, TEXT_OFFSET, mPaint);
+    dX = (int) canvas.getWidth() / 2;
+    dY = (int) ((canvas.getHeight() / 2) - ((mPaint.descent() + mPaint.ascent()) / 2));
+    canvas.drawText(Integer.toString(progress), dX, dY, mPaint);
   }
 
   private void drawBitmapOnCanvas(Canvas canvas, Matrix matrix, Bitmap bitmap) {
-    canvas.drawBitmap(bitmap, matrix, null);
+    float dX = (canvas.getWidth() - bitmap.getWidth()) / 2;
+    float dY = (canvas.getHeight() - bitmap.getHeight()) / 2;
+    canvas.drawBitmap(bitmap, dX, dY, null);
   }
 }

@@ -4,18 +4,30 @@
 
     <!-- The names of the objects to be displayed on the recylerview-->
     <string-array name="image_display_names_list">
-        <item>Tree</item>
-        <item>Satellite</item>
-        <item>Moon</item>
-        <item>Arrays</item>
-        <item>Computers</item>
-        <item>Laptops</item>
-        <item>Phone</item>
-        <item>Laptop</item>
-        <item>Bottle</item>
-        <item>Cable</item>
+        <item>The Breakup Song</item>
+        <item>Let Me Love You</item>
+        <item>Cheap Thrills</item>
+        <item>Chandelier</item>
+        <item>We Don\'t Talk Anymore</item>
+        <item>Don\'t Let Me Down</item>
+        <item>Someone Like You</item>
+        <item>Titanium</item>
+        <item>Elastic Heart</item>
+        <item>Drag Me Down</item>
     </string-array>
 
+    <integer-array name="image_download_cover_list">
+        <item>@drawable/icon10</item>
+        <item>@drawable/icon9</item>
+        <item>@drawable/icon8</item>
+        <item>@drawable/icon7</item>
+        <item>@drawable/icon6</item>
+        <item>@drawable/icon5</item>
+        <item>@drawable/icon4</item>
+        <item>@drawable/icon3</item>
+        <item>@drawable/icon2</item>
+        <item>@drawable/icon1</item>
+    </integer-array>
     <!-- The list of urls to be downloaded-->
     <string-array name="image_download_url_list">
         <item>http://mars.jpl.nasa.gov/gallery/spacecraft/hires/phoenix_hr.jpg</item>
