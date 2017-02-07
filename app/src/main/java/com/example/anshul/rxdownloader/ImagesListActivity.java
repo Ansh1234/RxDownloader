@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 
 public class ImagesListActivity extends Activity {
 
+  private ImagesListAdapter imagesListAdapter;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -19,9 +21,24 @@ public class ImagesListActivity extends Activity {
     String[] imagesDisplayNamesList = getResources().getStringArray(R.array
         .image_display_names_list);
     String[] imageDownloadUrlList = getResources().getStringArray(R.array.image_download_url_list);
-    ImagesListAdapter adapter = new ImagesListAdapter(this,imagesDisplayNamesList,
+    imagesListAdapter = new ImagesListAdapter(this, imagesDisplayNamesList,
         imageDownloadUrlList);
     imagesListView.setLayoutManager(new LinearLayoutManager(this));
-    imagesListView.setAdapter(adapter);
+    imagesListView.setAdapter(imagesListAdapter);
+  }
+
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    if(isFinishing() && imagesListAdapter!=null){
+      imagesListAdapter.performCleanUp();
+    }
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+
   }
 }

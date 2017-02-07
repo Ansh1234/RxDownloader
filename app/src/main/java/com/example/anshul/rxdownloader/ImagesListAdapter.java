@@ -2,7 +2,9 @@ package com.example.anshul.rxdownloader;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.support.v7.internal.app.ToolbarActionBar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,25 +30,25 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
 
   private final String[] imageNames;
   private final String[] imageDownloadUrls;
-  private final int MAX_COUNT = 1;
+  private final int MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS = 2;
   private int currentCount = 0;
-  private Subscription subscription;
+  private Subscription downloadRequestsSubscription;
   private FlowableEmitter downloadsFlowableEmitter;
   private ObservableEmitter percentageObservableEmitter;
+  private Disposable downloadPercentDisposable;
   private DownloadManager downloadManager;
-  private Context context;
+  private static final String TAG = ImagesListAdapter.class.getSimpleName();
 
   public ImagesListAdapter(Context context, String[] imageUrls, String[] imageDownloadUrls) {
     this.imageNames = imageUrls;
     this.imageDownloadUrls = imageDownloadUrls;
-    this.context = context;
     this.downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 
     subscribeToDownloadRequests();
-    setDownloadPercents();
+    observeIndividaulItemDownloadPercents();
   }
 
-  private void setDownloadPercents() {
+  private void observeIndividaulItemDownloadPercents() {
     ObservableOnSubscribe observableOnSubscribe = new ObservableOnSubscribe() {
       @Override
       public void subscribe(ObservableEmitter e) throws Exception {
@@ -59,7 +61,7 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
     final Observer subscriber = new Observer() {
       @Override
       public void onSubscribe(Disposable d) {
-
+        downloadPercentDisposable = d;
       }
 
       @Override
@@ -67,16 +69,14 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
         if (!(value instanceof DownloadableObject)) {
           return;
         }
-        System.out.println(
-            "Received download percentage is " + ((DownloadableObject) value).getCurrentDownloadPercent());
-        ImageDetailsViewHolder imageDetailsViewHolder = ((DownloadableObject) value)
+        ItemDetailsViewHolder itemDetailsViewHolder = ((DownloadableObject) value)
             .getItemViewHolder();
         Integer downloadPercent = (int) ((DownloadableObject) value).getCurrentDownloadPercent();
-        imageDetailsViewHolder.setImageInProgressState(downloadPercent);
-        if (downloadPercent == 100) {
+        itemDetailsViewHolder.setImageInProgressState(downloadPercent);
+        if (downloadPercent == Constants.DOWNLOAD_COMPLETE_PERCENT) {
           currentCount--;
-          subscription.request(MAX_COUNT - currentCount);
-          imageDetailsViewHolder.setImageToCompletedState();
+          downloadRequestsSubscription.request(MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS - currentCount);
+          itemDetailsViewHolder.setImageToCompletedState();
         }
       }
 
@@ -106,8 +106,8 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
     final Subscriber subscriber = new Subscriber() {
       @Override
       public void onSubscribe(Subscription s) {
-        subscription = s;
-        subscription.request(MAX_COUNT);
+        downloadRequestsSubscription = s;
+        downloadRequestsSubscription.request(MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS);
       }
 
       @Override
@@ -143,21 +143,29 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
     flowable.subscribeWith(subscriber);
   }
 
+  public void performCleanUp() {
+    Log.d(TAG, "performing clean up of the resources");
+    if (!downloadPercentDisposable.isDisposed()) {
+      downloadPercentDisposable.dispose();
+    }
+    if (downloadRequestsSubscription != null) {
+      downloadRequestsSubscription.cancel();
+    }
+  }
 
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view =
-        LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.layout_image_details, parent, false);
-    ImageDetailsViewHolder imageDetailsViewHolder =
-        new ImageDetailsViewHolder(view, downloadsFlowableEmitter);
-    return imageDetailsViewHolder;
+    View view = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.layout_image_details, parent, false);
+    ItemDetailsViewHolder itemDetailsViewHolder =
+        new ItemDetailsViewHolder(view, downloadsFlowableEmitter);
+    return itemDetailsViewHolder;
   }
 
   @Override
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-    if (holder instanceof ImageDetailsViewHolder) {
-      ((ImageDetailsViewHolder) holder).updateImageDetails(imageNames[position],
+    if (holder instanceof ItemDetailsViewHolder) {
+      ((ItemDetailsViewHolder) holder).updateImageDetails(imageNames[position],
           imageDownloadUrls[position]);
     }
   }

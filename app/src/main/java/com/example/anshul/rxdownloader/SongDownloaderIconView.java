@@ -59,6 +59,10 @@ public class SongDownloaderIconView extends View {
     invalidate();
   }
 
+  public DownloadingStatus getDownloadingStatus() {
+    return downloadingStatus;
+  }
+
   public void updateProgress(int progress) {
     this.progress = progress;
   }

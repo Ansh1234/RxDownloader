@@ -6,18 +6,18 @@ package com.example.anshul.rxdownloader;
 
 public class DownloadableObject {
 
-  private ImageDetailsViewHolder itemViewHolder;
+  private ItemDetailsViewHolder itemViewHolder;
   private long itemDownloadId;
   private String itemDownloadUrl;
   private long currentDownloadPercent;
   private long lastEmittedDownloadPercent = -1;
 
-  public ImageDetailsViewHolder getItemViewHolder() {
+  public ItemDetailsViewHolder getItemViewHolder() {
     return itemViewHolder;
   }
 
   public void setItemViewHolder(
-      ImageDetailsViewHolder itemViewHolder) {
+      ItemDetailsViewHolder itemViewHolder) {
     this.itemViewHolder = itemViewHolder;
   }
 

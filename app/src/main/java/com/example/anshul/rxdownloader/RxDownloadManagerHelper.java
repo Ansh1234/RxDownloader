@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 
 import io.reactivex.ObservableEmitter;
 
@@ -18,6 +19,7 @@ public class RxDownloadManagerHelper {
   private final static int PERCENT_MULTIPLIER = 100;
   private final static int MIN_DOWNLOAD_PERCENT_DIFF = 3;
   private final static int INVALID_DOWNLOAD_ID = -1;
+  private final static String TAG = RxDownloadManagerHelper.class.getSimpleName();
 
   /**
    * @param downloadManager - Android's Download Manager.
@@ -48,7 +50,9 @@ public class RxDownloadManagerHelper {
                                            final DownloadableObject downloadableObject,
                                            final ObservableEmitter percentFlowableEmiitter) {
 
-    if (downloadManager == null || downloadableObject == null || percentFlowableEmiitter == null) {
+    //If the emitter has been disposed, then return.
+    if (downloadManager == null || downloadableObject == null || percentFlowableEmiitter == null
+        || percentFlowableEmiitter.isDisposed()) {
       return;
     }
 
@@ -67,9 +71,13 @@ public class RxDownloadManagerHelper {
     downloadableObject.setCurrentDownloadPercent(currentDownloadPercent);
     if ((currentDownloadPercent - previousDownloadPercent >= MIN_DOWNLOAD_PERCENT_DIFF) ||
         currentDownloadPercent == DOWNLOAD_COMPLETE_PERCENT) {
+      System.out.println(percentFlowableEmiitter.isDisposed());
       percentFlowableEmiitter.onNext(downloadableObject);
       downloadableObject.setLastEmittedDownloadPercent(currentDownloadPercent);
     }
+    Log.d(TAG,
+        " Querying the DB: DownloadStatus is " + downloadStatus + " and downloadPercent is " +
+            "" + currentDownloadPercent);
     switch (downloadStatus) {
       case DownloadManager.STATUS_FAILED:
         break;
