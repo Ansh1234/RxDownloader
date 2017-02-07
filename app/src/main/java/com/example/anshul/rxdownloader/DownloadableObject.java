@@ -6,41 +6,50 @@ package com.example.anshul.rxdownloader;
 
 public class DownloadableObject {
 
-  private ImageDetailsViewHolder imageDetailsViewHolder;
-  private long downloadId;
-  private String downloadImageUrl;
-  private long downloadPercent;
+  private ImageDetailsViewHolder itemViewHolder;
+  private long itemDownloadId;
+  private String itemDownloadUrl;
+  private long currentDownloadPercent;
+  private long lastEmittedDownloadPercent = -1;
 
-  public ImageDetailsViewHolder getImageDetailsViewHolder() {
-    return imageDetailsViewHolder;
+  public ImageDetailsViewHolder getItemViewHolder() {
+    return itemViewHolder;
   }
 
-  public void setImageDetailsViewHolder(
-      ImageDetailsViewHolder imageDetailsViewHolder) {
-    this.imageDetailsViewHolder = imageDetailsViewHolder;
+  public void setItemViewHolder(
+      ImageDetailsViewHolder itemViewHolder) {
+    this.itemViewHolder = itemViewHolder;
   }
 
-  public long getDownloadId() {
-    return downloadId;
+  public long getItemDownloadId() {
+    return itemDownloadId;
   }
 
-  public void setDownloadId(long downloadId) {
-    this.downloadId = downloadId;
+  public void setItemDownloadId(long itemDownloadId) {
+    this.itemDownloadId = itemDownloadId;
   }
 
-  public String getDownloadImageUrl() {
-    return downloadImageUrl;
+  public String getItemDownloadUrl() {
+    return itemDownloadUrl;
   }
 
-  public void setDownloadImageUrl(String downloadImageUrl) {
-    this.downloadImageUrl = downloadImageUrl;
+  public void setItemDownloadUrl(String itemDownloadUrl) {
+    this.itemDownloadUrl = itemDownloadUrl;
   }
 
-  public long getDownloadPercent() {
-    return downloadPercent;
+  public long getCurrentDownloadPercent() {
+    return currentDownloadPercent;
   }
 
-  public void setDownloadPercent(long downloadPercent) {
-    this.downloadPercent = downloadPercent;
+  public void setCurrentDownloadPercent(long currentDownloadPercent) {
+    this.currentDownloadPercent = currentDownloadPercent;
+  }
+
+  public long getLastEmittedDownloadPercent() {
+    return lastEmittedDownloadPercent;
+  }
+
+  public void setLastEmittedDownloadPercent(long lastEmittedDownloadPercent) {
+    this.lastEmittedDownloadPercent = lastEmittedDownloadPercent;
   }
 }

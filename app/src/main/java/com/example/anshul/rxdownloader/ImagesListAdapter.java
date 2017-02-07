@@ -2,7 +2,6 @@ package com.example.anshul.rxdownloader;
 
 import android.app.DownloadManager;
 import android.content.Context;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +42,7 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
     this.context = context;
     this.downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 
-    setDownloadRequests();
+    subscribeToDownloadRequests();
     setDownloadPercents();
   }
 
@@ -65,16 +64,18 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
 
       @Override
       public void onNext(Object value) {
-        System.out.println("value is " + value);
         if (!(value instanceof DownloadableObject)) {
           return;
         }
-        Integer downloadPercent = (int)((DownloadableObject) value).getDownloadPercent();
+        System.out.println(
+            "Received download percentage is " + ((DownloadableObject) value).getCurrentDownloadPercent());
+        ImageDetailsViewHolder imageDetailsViewHolder = ((DownloadableObject) value)
+            .getItemViewHolder();
+        Integer downloadPercent = (int) ((DownloadableObject) value).getCurrentDownloadPercent();
+        imageDetailsViewHolder.setImageInProgressState(downloadPercent);
         if (downloadPercent == 100) {
           currentCount--;
           subscription.request(MAX_COUNT - currentCount);
-          ImageDetailsViewHolder imageDetailsViewHolder = ((DownloadableObject) value)
-              .getImageDetailsViewHolder();
           imageDetailsViewHolder.setImageToCompletedState();
         }
       }
@@ -92,7 +93,8 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
     observable.subscribeWith(subscriber);
   }
 
-  private void setDownloadRequests() {
+  private void subscribeToDownloadRequests() {
+
     FlowableOnSubscribe flowableOnSubscribe = new FlowableOnSubscribe() {
       @Override
       public void subscribe(FlowableEmitter e) throws Exception {
@@ -116,11 +118,14 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
 
         currentCount++;
         DownloadableObject downloadableObject = (DownloadableObject) o;
-        downloadableObject.getImageDetailsViewHolder().setImageToProgressState();
+        downloadableObject.getItemViewHolder().setImageInProgressState(0);
         System.out.println("The value of onNext is " + downloadableObject);
-        long downloadId = RxDownloadManagerHelper.downloadImage(downloadManager, (
-            downloadableObject.getDownloadImageUrl()));
-        downloadableObject.setDownloadId(downloadId);
+        long downloadId = RxDownloadManagerHelper.submitRequestToDownloadManager(downloadManager, (
+            downloadableObject.getItemDownloadUrl()));
+        if (downloadId == -1) {
+          return;
+        }
+        downloadableObject.setItemDownloadId(downloadId);
         RxDownloadManagerHelper.queryDownloadPercents(downloadManager, downloadableObject,
             percentageObservableEmitter);
       }
