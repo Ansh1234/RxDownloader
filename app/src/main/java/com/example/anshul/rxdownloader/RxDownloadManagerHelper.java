@@ -37,7 +37,7 @@ public class RxDownloadManagerHelper {
   }
 
   /**
-   * TODO anshul.jain: Manage cases of failure and activity exit.
+   * TODO anshul.jain: Manage cases of failure.
    * This method will be called upon every 'x' milliseconds to know the percentage of a download.
    * This method will only emit the percent download, if the current percent download is 5%
    * greater than the previous percent download.

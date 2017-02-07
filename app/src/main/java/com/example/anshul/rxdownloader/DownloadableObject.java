@@ -52,4 +52,14 @@ public class DownloadableObject {
   public void setLastEmittedDownloadPercent(long lastEmittedDownloadPercent) {
     this.lastEmittedDownloadPercent = lastEmittedDownloadPercent;
   }
+
+  @Override
+  public String toString() {
+    return "DownloadableObject{" +
+        ", itemDownloadId=" + itemDownloadId +
+        ", itemDownloadUrl='" + itemDownloadUrl + '\'' +
+        ", currentDownloadPercent=" + currentDownloadPercent +
+        ", lastEmittedDownloadPercent=" + lastEmittedDownloadPercent +
+        '}';
+  }
 }

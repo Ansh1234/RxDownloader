@@ -30,127 +30,39 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
 
   private final String[] imageNames;
   private final String[] imageDownloadUrls;
-  private final int MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS = 2;
   private int currentCount = 0;
-  private Subscription downloadRequestsSubscription;
-  private FlowableEmitter downloadsFlowableEmitter;
-  private ObservableEmitter percentageObservableEmitter;
-  private Disposable downloadPercentDisposable;
   private DownloadManager downloadManager;
   private static final String TAG = ImagesListAdapter.class.getSimpleName();
+  private ItemDownloadPercentObserver mItemDownloadPercentObserver;
+  private DownloadRequestsSubscriber mDownloadRequestsSubscriber;
 
   public ImagesListAdapter(Context context, String[] imageUrls, String[] imageDownloadUrls) {
     this.imageNames = imageUrls;
     this.imageDownloadUrls = imageDownloadUrls;
     this.downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-
-    subscribeToDownloadRequests();
-    observeIndividaulItemDownloadPercents();
+    mItemDownloadPercentObserver = new ItemDownloadPercentObserver(this);
+    mItemDownloadPercentObserver.init();
+    mDownloadRequestsSubscriber = new DownloadRequestsSubscriber
+        (downloadManager, this);
+    mDownloadRequestsSubscriber.init();
+    mDownloadRequestsSubscriber.setPercentageObservableEmitter(
+        mItemDownloadPercentObserver.getPercentageObservableEmitter());
+    mItemDownloadPercentObserver.setDownloadRequestsSubscription(
+        mDownloadRequestsSubscriber.getDownloadRequestsSubscription());
   }
 
-  private void observeIndividaulItemDownloadPercents() {
-    ObservableOnSubscribe observableOnSubscribe = new ObservableOnSubscribe() {
-      @Override
-      public void subscribe(ObservableEmitter e) throws Exception {
-        percentageObservableEmitter = e;
-      }
-    };
-
-    final Observable observable = Observable.create(observableOnSubscribe);
-
-    final Observer subscriber = new Observer() {
-      @Override
-      public void onSubscribe(Disposable d) {
-        downloadPercentDisposable = d;
-      }
-
-      @Override
-      public void onNext(Object value) {
-        if (!(value instanceof DownloadableObject)) {
-          return;
-        }
-        ItemDetailsViewHolder itemDetailsViewHolder = ((DownloadableObject) value)
-            .getItemViewHolder();
-        Integer downloadPercent = (int) ((DownloadableObject) value).getCurrentDownloadPercent();
-        itemDetailsViewHolder.setImageInProgressState(downloadPercent);
-        if (downloadPercent == Constants.DOWNLOAD_COMPLETE_PERCENT) {
-          currentCount--;
-          downloadRequestsSubscription.request(MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS - currentCount);
-          itemDetailsViewHolder.setImageToCompletedState();
-        }
-      }
-
-      @Override
-      public void onError(Throwable e) {
-
-      }
-
-      @Override
-      public void onComplete() {
-
-      }
-    };
-    observable.subscribeWith(subscriber);
+  public int getCurrentCount() {
+    return currentCount;
   }
 
-  private void subscribeToDownloadRequests() {
-
-    FlowableOnSubscribe flowableOnSubscribe = new FlowableOnSubscribe() {
-      @Override
-      public void subscribe(FlowableEmitter e) throws Exception {
-        downloadsFlowableEmitter = e;
-      }
-    };
-
-    final Flowable flowable = Flowable.create(flowableOnSubscribe, BackpressureStrategy.BUFFER);
-    final Subscriber subscriber = new Subscriber() {
-      @Override
-      public void onSubscribe(Subscription s) {
-        downloadRequestsSubscription = s;
-        downloadRequestsSubscription.request(MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS);
-      }
-
-      @Override
-      public void onNext(Object o) {
-        if (!(o instanceof DownloadableObject)) {
-          return;
-        }
-
-        currentCount++;
-        DownloadableObject downloadableObject = (DownloadableObject) o;
-        downloadableObject.getItemViewHolder().setImageInProgressState(0);
-        System.out.println("The value of onNext is " + downloadableObject);
-        long downloadId = RxDownloadManagerHelper.submitRequestToDownloadManager(downloadManager, (
-            downloadableObject.getItemDownloadUrl()));
-        if (downloadId == -1) {
-          return;
-        }
-        downloadableObject.setItemDownloadId(downloadId);
-        RxDownloadManagerHelper.queryDownloadPercents(downloadManager, downloadableObject,
-            percentageObservableEmitter);
-      }
-
-      @Override
-      public void onError(Throwable t) {
-
-      }
-
-      @Override
-      public void onComplete() {
-
-      }
-    };
-    flowable.subscribeWith(subscriber);
+  public void setCurrentCount(int currentCount) {
+    this.currentCount = currentCount;
   }
 
   public void performCleanUp() {
     Log.d(TAG, "performing clean up of the resources");
-    if (!downloadPercentDisposable.isDisposed()) {
-      downloadPercentDisposable.dispose();
-    }
-    if (downloadRequestsSubscription != null) {
-      downloadRequestsSubscription.cancel();
-    }
+    mItemDownloadPercentObserver.performCleanUp();
+    mDownloadRequestsSubscriber.performCleanUp();
   }
 
   @Override
@@ -158,7 +70,7 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.layout_image_details, parent, false);
     ItemDetailsViewHolder itemDetailsViewHolder =
-        new ItemDetailsViewHolder(view, downloadsFlowableEmitter);
+        new ItemDetailsViewHolder(view, mDownloadRequestsSubscriber.getDownloadsFlowableEmitter());
     return itemDetailsViewHolder;
   }
 

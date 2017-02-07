@@ -18,8 +18,7 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
   private SongDownloaderIconView imageDownloadIcon;
   private FlowableEmitter flowableEmitter;
 
-  public ItemDetailsViewHolder(View itemView, FlowableEmitter
-      flowableEmitter) {
+  public ItemDetailsViewHolder(View itemView, FlowableEmitter flowableEmitter) {
     super(itemView);
 
     if (itemView == null) {
