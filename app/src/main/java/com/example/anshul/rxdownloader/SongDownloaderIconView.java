@@ -27,7 +27,7 @@ public class SongDownloaderIconView extends View {
   private int progress = 0;
   private Paint mPaint;
   private Bitmap mIconImageNotDownloaded, mIconImageWaiting, mIconImageCompleted;
-  private final int TRANSLATE_DISTANCE = 100;
+  private String itemId;
 
   private DownloadingStatus downloadingStatus = DownloadingStatus.NOT_DOWNLOADED;
   private Bitmap bitmap;
@@ -46,6 +46,7 @@ public class SongDownloaderIconView extends View {
 
 
   public void init() {
+    System.out.println("inside init");
     mPaint = new Paint();
     mIconImageNotDownloaded =
         BitmapFactory.decodeResource(getResources(), R.drawable.icon_image_not_downloaded);
@@ -63,6 +64,18 @@ public class SongDownloaderIconView extends View {
     return downloadingStatus;
   }
 
+  public void setDownloadingStatus(DownloadingStatus downloadingStatus) {
+    this.downloadingStatus = downloadingStatus;
+  }
+
+  public String getItemId() {
+    return itemId;
+  }
+
+  public void setItemId(String itemId) {
+    this.itemId = itemId;
+  }
+
   public void updateProgress(int progress) {
     this.progress = progress;
   }
@@ -74,15 +87,19 @@ public class SongDownloaderIconView extends View {
 
     switch (downloadingStatus) {
       case NOT_DOWNLOADED:
+        ItemHelper.setDownloadStatus(getContext(),itemId,DownloadingStatus.NOT_DOWNLOADED);
         drawBitmapOnCanvas(canvas, matrix, mIconImageNotDownloaded);
         break;
       case DOWNLOADED:
         drawBitmapOnCanvas(canvas, matrix, mIconImageCompleted);
+        ItemHelper.setDownloadStatus(getContext(),itemId,DownloadingStatus.DOWNLOADED);
         break;
       case IN_PROGRESS:
         drawInProgressIconOnCanvas(canvas);
+        ItemHelper.setDownloadStatus(getContext(),itemId,DownloadingStatus.IN_PROGRESS);
         break;
       case WAITING:
+        ItemHelper.setDownloadStatus(getContext(),itemId,DownloadingStatus.WAITING);
         matrix.postRotate(rotateAngle++);
         if (rotateAngle < TOTAL_ANGLE) {
           invalidate();

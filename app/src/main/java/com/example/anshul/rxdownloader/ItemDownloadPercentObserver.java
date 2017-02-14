@@ -17,10 +17,10 @@ public class ItemDownloadPercentObserver {
   private ObservableEmitter percentageObservableEmitter;
   private Disposable downloadPercentDisposable;
   private Subscription downloadRequestsSubscription;
-  private final ImagesListAdapter imagesListAdapter;
+  private final ItemListAdapter itemListAdapter;
 
-  public ItemDownloadPercentObserver(ImagesListAdapter imagesListAdapter) {
-    this.imagesListAdapter = imagesListAdapter;
+  public ItemDownloadPercentObserver(ItemListAdapter itemListAdapter) {
+    this.itemListAdapter = itemListAdapter;
   }
 
   public ObservableEmitter getPercentageObservableEmitter() {
@@ -63,9 +63,9 @@ public class ItemDownloadPercentObserver {
         Integer downloadPercent = (int) ((DownloadableObject) value).getCurrentDownloadPercent();
         itemDetailsViewHolder.setImageInProgressState(downloadPercent);
         if (downloadPercent == Constants.DOWNLOAD_COMPLETE_PERCENT) {
-          imagesListAdapter.setCurrentCount(imagesListAdapter.getCurrentCount() - 1);
+          itemListAdapter.setCurrentCount(itemListAdapter.getCurrentCount() - 1);
           downloadRequestsSubscription.request(Constants.MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS -
-              imagesListAdapter.getCurrentCount());
+              itemListAdapter.getCurrentCount());
           itemDetailsViewHolder.setImageToCompletedState();
         }
       }

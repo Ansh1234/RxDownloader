@@ -19,6 +19,7 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
   private SongDownloaderIconView imageDownloadIcon;
   private FlowableEmitter flowableEmitter;
   private ImageView itemCoverIcon;
+  private Item item;
 
   public ItemDetailsViewHolder(View itemView, FlowableEmitter flowableEmitter) {
     super(itemView);
@@ -35,10 +36,13 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
     this.flowableEmitter = flowableEmitter;
   }
 
-  public void updateImageDetails(String name, String imageDownloadUrl, int drawableId) {
-    imageName.setText(name);
-    itemCoverIcon.setImageResource(drawableId);
-    this.imageDownloadUrl = imageDownloadUrl;
+  public void updateImageDetails(Item item) {
+    this.item=item;
+    imageName.setText(item.getItemTitle());
+    itemCoverIcon.setImageResource(item.getItemCoverId());
+    imageDownloadUrl =  item.getItemDownloadUrl();
+    imageDownloadIcon.setItemId(item.getId());
+    imageDownloadIcon.updateDownloadingStatus(item.getDownloadingStatus());
   }
 
   @Override

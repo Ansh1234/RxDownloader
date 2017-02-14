@@ -21,15 +21,15 @@ public class DownloadRequestsSubscriber {
   private Subscription downloadRequestsSubscription;
   private FlowableEmitter downloadsFlowableEmitter;
   private final DownloadManager downloadManager;
-  private final ImagesListAdapter imagesListAdapter;
+  private final ItemListAdapter itemListAdapter;
   private ObservableEmitter percentageObservableEmitter;
   private final String TAG = DownloadRequestsSubscriber.class.getSimpleName();
 
 
   public DownloadRequestsSubscriber(DownloadManager downloadManager,
-                                    ImagesListAdapter imagesListAdapter) {
+                                    ItemListAdapter itemListAdapter) {
     this.downloadManager = downloadManager;
-    this.imagesListAdapter = imagesListAdapter;
+    this.itemListAdapter = itemListAdapter;
   }
 
   public void setPercentageObservableEmitter(ObservableEmitter percentageObservableEmitter
@@ -72,7 +72,7 @@ public class DownloadRequestsSubscriber {
           return;
         }
 
-        imagesListAdapter.setCurrentCount(imagesListAdapter.getCurrentCount() + 1);
+        itemListAdapter.setCurrentCount(itemListAdapter.getCurrentCount() + 1);
         DownloadableObject downloadableObject = (DownloadableObject) o;
         downloadableObject.getItemViewHolder().setImageInProgressState(0);
         Log.d(TAG, "Received: " + downloadableObject.toString());

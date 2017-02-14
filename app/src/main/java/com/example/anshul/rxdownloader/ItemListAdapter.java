@@ -3,57 +3,46 @@ package com.example.anshul.rxdownloader;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.internal.app.ToolbarActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by anshul on 15/1/17.
  */
 
-public class ImagesListAdapter extends RecyclerView.Adapter {
+public class ItemListAdapter extends RecyclerView.Adapter {
 
-  private final String[] imageNames;
-  private final String[] imageDownloadUrls;
-  private final TypedArray itemDownloadCovers;
+  private final ArrayList<Item> itemsList;
 
   private int currentCount = 0;
   private DownloadManager downloadManager;
-  private static final String TAG = ImagesListAdapter.class.getSimpleName();
+  private static final String TAG = ItemListAdapter.class.getSimpleName();
   private ItemDownloadPercentObserver mItemDownloadPercentObserver;
   private DownloadRequestsSubscriber mDownloadRequestsSubscriber;
+  private WeakReference<Context> contextWeakReference;
 
-  public ImagesListAdapter(Context context, String[] imageUrls, String[] imageDownloadUrls, TypedArray
-      itemDownloadCovers) {
-    this.imageNames = imageUrls;
-    this.imageDownloadUrls = imageDownloadUrls;
-    this.itemDownloadCovers = itemDownloadCovers;
+  public ItemListAdapter(Context context, ArrayList<Item> itemList) {
+    this.itemsList = itemList;
     this.downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
     mItemDownloadPercentObserver = new ItemDownloadPercentObserver(this);
     mItemDownloadPercentObserver.init();
     mDownloadRequestsSubscriber = new DownloadRequestsSubscriber
         (downloadManager, this);
+
     mDownloadRequestsSubscriber.init();
     mDownloadRequestsSubscriber.setPercentageObservableEmitter(
         mItemDownloadPercentObserver.getPercentageObservableEmitter());
     mItemDownloadPercentObserver.setDownloadRequestsSubscription(
         mDownloadRequestsSubscriber.getDownloadRequestsSubscription());
+    contextWeakReference = new WeakReference<Context>(context);
   }
 
   public int getCurrentCount() {
@@ -82,16 +71,19 @@ public class ImagesListAdapter extends RecyclerView.Adapter {
   @Override
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     if (holder instanceof ItemDetailsViewHolder) {
-      ((ItemDetailsViewHolder) holder).updateImageDetails(imageNames[position],
-          imageDownloadUrls[position], itemDownloadCovers.getResourceId(position,-1));
+      Item item = itemsList.get(position);
+      String downloadingStatus = ItemHelper.getDownloadStatus(contextWeakReference.get(),
+          item.getId());
+      item.setDownloadingStatus(DownloadingStatus.getValue(downloadingStatus));
+      ((ItemDetailsViewHolder) holder).updateImageDetails(item);
     }
   }
 
   @Override
   public int getItemCount() {
-    if (imageNames != null) {
-      return imageNames.length;
+    if (itemsList == null) {
+      return 0;
     }
-    return 0;
+    return itemsList.size();
   }
 }
