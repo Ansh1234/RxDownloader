@@ -43,23 +43,23 @@ public class RxDownloadManagerHelper {
    * greater than the previous percent download.
    *
    * @param downloadManager
-   * @param downloadableObject
+   * @param downloadableItem
    * @param percentFlowableEmiitter
    */
   public static void queryDownloadPercents(final DownloadManager downloadManager,
-                                           final DownloadableObject downloadableObject,
+                                           final DownloadableItem downloadableItem,
                                            final ObservableEmitter percentFlowableEmiitter) {
 
     //If the emitter has been disposed, then return.
-    if (downloadManager == null || downloadableObject == null || percentFlowableEmiitter == null
+    if (downloadManager == null || downloadableItem == null || percentFlowableEmiitter == null
         || percentFlowableEmiitter.isDisposed()) {
       return;
     }
 
-    long previousDownloadPercent = downloadableObject.getLastEmittedDownloadPercent();
+    long previousDownloadPercent = downloadableItem.getLastEmittedDownloadPercent();
 
-    DownloadableResult downloadableResult = getDownloadResult(downloadManager, downloadableObject
-        .getItemDownloadId());
+    DownloadableResult downloadableResult = getDownloadResult(downloadManager, downloadableItem
+        .getDownloadId());
 
     if (downloadableResult == null) {
       return;
@@ -68,16 +68,16 @@ public class RxDownloadManagerHelper {
     //Get the current DownloadPercent and download status
     int currentDownloadPercent = downloadableResult.getPercent();
     int downloadStatus = downloadableResult.getDownloadStatus();
-    downloadableObject.setCurrentDownloadPercent(currentDownloadPercent);
+    downloadableItem.setItemDownloadPercent(currentDownloadPercent);
     if ((currentDownloadPercent - previousDownloadPercent >= MIN_DOWNLOAD_PERCENT_DIFF) ||
         currentDownloadPercent == DOWNLOAD_COMPLETE_PERCENT) {
       System.out.println(percentFlowableEmiitter.isDisposed());
-      percentFlowableEmiitter.onNext(downloadableObject);
-      downloadableObject.setLastEmittedDownloadPercent(currentDownloadPercent);
+      percentFlowableEmiitter.onNext(downloadableItem);
+      downloadableItem.setLastEmittedDownloadPercent(currentDownloadPercent);
     }
-    Log.d(TAG,
-        " Querying the DB: DownloadStatus is " + downloadStatus + " and downloadPercent is " +
-            "" + currentDownloadPercent);
+//    Log.d(TAG,
+//        " Querying the DB: DownloadStatus is " + downloadStatus + " and downloadPercent is " +
+//            "" + currentDownloadPercent);
     switch (downloadStatus) {
       case DownloadManager.STATUS_FAILED:
         break;
@@ -92,7 +92,7 @@ public class RxDownloadManagerHelper {
         handler.postDelayed(new Runnable() {
           @Override
           public void run() {
-            queryDownloadPercents(downloadManager, downloadableObject, percentFlowableEmiitter);
+            queryDownloadPercents(downloadManager, downloadableItem, percentFlowableEmiitter);
           }
         }, DOWNLOAD_QUERY_DELAY_PARAM);
         break;

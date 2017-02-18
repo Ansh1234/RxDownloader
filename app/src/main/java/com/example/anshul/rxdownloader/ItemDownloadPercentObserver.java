@@ -16,7 +16,6 @@ public class ItemDownloadPercentObserver {
 
   private ObservableEmitter percentageObservableEmitter;
   private Disposable downloadPercentDisposable;
-  private Subscription downloadRequestsSubscription;
   private final ItemListAdapter itemListAdapter;
 
   public ItemDownloadPercentObserver(ItemListAdapter itemListAdapter) {
@@ -27,10 +26,6 @@ public class ItemDownloadPercentObserver {
     return percentageObservableEmitter;
   }
 
-  public void setDownloadRequestsSubscription(
-      Subscription downloadRequestsSubscription) {
-    this.downloadRequestsSubscription = downloadRequestsSubscription;
-  }
 
   public void init() {
     ObservableOnSubscribe observableOnSubscribe = new ObservableOnSubscribe() {
@@ -55,19 +50,10 @@ public class ItemDownloadPercentObserver {
 
       @Override
       public void onNext(Object value) {
-        if (!(value instanceof DownloadableObject)) {
+        if (!(value instanceof DownloadableItem)) {
           return;
         }
-        ItemDetailsViewHolder itemDetailsViewHolder = ((DownloadableObject) value)
-            .getItemViewHolder();
-        Integer downloadPercent = (int) ((DownloadableObject) value).getCurrentDownloadPercent();
-        itemDetailsViewHolder.setImageInProgressState(downloadPercent);
-        if (downloadPercent == Constants.DOWNLOAD_COMPLETE_PERCENT) {
-          itemListAdapter.setCurrentCount(itemListAdapter.getCurrentCount() - 1);
-          downloadRequestsSubscription.request(Constants.MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS -
-              itemListAdapter.getCurrentCount());
-          itemDetailsViewHolder.setImageToCompletedState();
-        }
+        itemListAdapter.setData((DownloadableItem) value);
       }
 
       @Override

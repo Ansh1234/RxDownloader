@@ -68,21 +68,21 @@ public class DownloadRequestsSubscriber {
 
       @Override
       public void onNext(Object o) {
-        if (!(o instanceof DownloadableObject)) {
+        if (!(o instanceof DownloadableItem)) {
           return;
         }
 
         itemListAdapter.setCurrentCount(itemListAdapter.getCurrentCount() + 1);
-        DownloadableObject downloadableObject = (DownloadableObject) o;
-        downloadableObject.getItemViewHolder().setImageInProgressState(0);
-        Log.d(TAG, "Received: " + downloadableObject.toString());
+        DownloadableItem downloadableItem = (DownloadableItem) o;
+        itemListAdapter.setData(downloadableItem);
+        Log.d(TAG, "Received: " + downloadableItem.toString());
         long downloadId = RxDownloadManagerHelper.submitRequestToDownloadManager(downloadManager, (
-            downloadableObject.getItemDownloadUrl()));
+            downloadableItem.getItemDownloadUrl()));
         if (downloadId == Constants.INVLALID_ID) {
           return;
         }
-        downloadableObject.setItemDownloadId(downloadId);
-        RxDownloadManagerHelper.queryDownloadPercents(downloadManager, downloadableObject,
+        downloadableItem.setDownloadId(downloadId);
+        RxDownloadManagerHelper.queryDownloadPercents(downloadManager, downloadableItem,
             percentageObservableEmitter);
       }
 

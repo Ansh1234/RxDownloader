@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by anshul on 14/2/17.
@@ -15,10 +14,10 @@ import java.util.List;
 public class ItemHelper {
 
   public static ArrayList getItems(Context context) {
-    ArrayList<Item> items = new ArrayList<>();
+    ArrayList<DownloadableItem> downloadableItems = new ArrayList<>();
 
     if (context == null) {
-      return items;
+      return downloadableItems;
     }
 
     Resources res = context.getResources();
@@ -28,24 +27,26 @@ public class ItemHelper {
     TypedArray imageDownloadCoverList = res.obtainTypedArray(R.array.image_download_cover_list);
 
     for (int i = 0; i < imagesId.length; i++) {
-      Item item = new Item();
+      DownloadableItem downloadableItem = new DownloadableItem();
       String itemId = imagesId[i];
-      item.setId(itemId);
+      downloadableItem.setId(itemId);
       String downloadingStatus = getDownloadStatus(context, itemId);
-      item.setDownloadingStatus(DownloadingStatus.getValue(downloadingStatus));
-      item.setItemTitle(imagesDisplayNamesList[i]);
-      item.setItemCoverId(imageDownloadCoverList.getResourceId(i, 0));
-      item.setItemDownloadUrl(imageDownloadUrlList[i]);
-      items.add(item);
+      downloadableItem.setDownloadingStatus(DownloadingStatus.getValue(downloadingStatus));
+      downloadableItem.setItemTitle(imagesDisplayNamesList[i]);
+      downloadableItem.setItemCoverId(imageDownloadCoverList.getResourceId(i, 0));
+      downloadableItem.setItemDownloadUrl(imageDownloadUrlList[i]);
+      downloadableItems.add(downloadableItem);
     }
-    return items;
+    return downloadableItems;
   }
 
   public static String getDownloadStatus(Context context, String itemId) {
     SharedPreferences preferences =
         context.getSharedPreferences(Constants.SHARED_PREFERENCES, Context
             .MODE_PRIVATE);
-    return preferences.getString(itemId, DownloadingStatus.NOT_DOWNLOADED.getDownloadStatus());
+    return preferences.getString(Constants.DOWNLOAD_PREFIX + itemId,
+        DownloadingStatus.NOT_DOWNLOADED
+            .getDownloadStatus());
   }
 
   public static void setDownloadStatus(Context context, String itemId, DownloadingStatus
@@ -54,7 +55,23 @@ public class ItemHelper {
         context.getSharedPreferences(Constants.SHARED_PREFERENCES, Context
             .MODE_PRIVATE);
     SharedPreferences.Editor editor = preferences.edit();
-    editor.putString(itemId, downloadingStatus.getDownloadStatus());
+    editor.putString(Constants.DOWNLOAD_PREFIX + itemId, downloadingStatus.getDownloadStatus());
     editor.commit();
+  }
+
+  public static void setDownloadPercent(Context context, String itemId, int percent) {
+    SharedPreferences preferences =
+        context.getSharedPreferences(Constants.SHARED_PREFERENCES, Context
+            .MODE_PRIVATE);
+    SharedPreferences.Editor editor = preferences.edit();
+    editor.putInt(Constants.PERCENT_PREFIX + itemId, percent);
+    editor.commit();
+  }
+
+  public static int getDownloadPercent(Context context, String itemId) {
+    SharedPreferences preferences =
+        context.getSharedPreferences(Constants.SHARED_PREFERENCES, Context
+            .MODE_PRIVATE);
+    return preferences.getInt(Constants.PERCENT_PREFIX + itemId, 0);
   }
 }

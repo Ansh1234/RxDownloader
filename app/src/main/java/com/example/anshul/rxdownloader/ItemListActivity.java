@@ -19,16 +19,16 @@ public class ItemListActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-
     //Set up the view.
     setContentView(R.layout.activity_download_item_list);
-    RecyclerView imagesListView = (RecyclerView) findViewById(R.id.download_items_list);
+    RecyclerView itemsListView = (RecyclerView) findViewById(R.id.download_items_list);
 
     //Get a list of downloadable items.
-    ArrayList<Item> itemList = ItemHelper.getItems(this);
-    itemListAdapter = new ItemListAdapter(this, itemList);
-    imagesListView.setLayoutManager(new LinearLayoutManager(this));
-    imagesListView.setAdapter(itemListAdapter);
+    ArrayList<DownloadableItem> downloadableItemList = ItemHelper.getItems(this);
+    itemListAdapter = new ItemListAdapter(this, downloadableItemList,itemsListView);
+    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+    itemsListView.setLayoutManager(linearLayoutManager);
+    itemsListView.setAdapter(itemListAdapter);
   }
 
 

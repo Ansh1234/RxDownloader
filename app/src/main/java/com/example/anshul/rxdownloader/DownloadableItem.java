@@ -4,13 +4,16 @@ package com.example.anshul.rxdownloader;
  * Created by anshul on 14/2/17.
  */
 
-public class Item {
+public class DownloadableItem {
 
   private String id;
+  private long downloadId;
   private String itemTitle;
   private int itemCoverId;
   private DownloadingStatus downloadingStatus;
   private String itemDownloadUrl;
+  private int itemDownloadPercent;
+  private long lastEmittedDownloadPercent = -1;
 
   public String getId() {
     return id;
@@ -50,5 +53,31 @@ public class Item {
 
   public void setItemDownloadUrl(String itemDownloadUrl) {
     this.itemDownloadUrl = itemDownloadUrl;
+  }
+
+  public int getItemDownloadPercent() {
+    return itemDownloadPercent;
+  }
+
+  public void setItemDownloadPercent(int itemDownloadPercent) {
+    this.itemDownloadPercent = itemDownloadPercent;
+  }
+
+
+
+  public long getLastEmittedDownloadPercent() {
+    return lastEmittedDownloadPercent;
+  }
+
+  public void setLastEmittedDownloadPercent(long lastEmittedDownloadPercent) {
+    this.lastEmittedDownloadPercent = lastEmittedDownloadPercent;
+  }
+
+  public long getDownloadId() {
+    return downloadId;
+  }
+
+  public void setDownloadId(long downloadId) {
+    this.downloadId = downloadId;
   }
 }

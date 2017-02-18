@@ -2,7 +2,6 @@ package com.example.anshul.rxdownloader;
 
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,39 +9,41 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by anshul on 15/1/17.
  */
 
-public class ItemListAdapter extends RecyclerView.Adapter {
+public class ItemListAdapter extends RecyclerView.Adapter implements ItemDownloaderCallback {
 
-  private final ArrayList<Item> itemsList;
+  private final ArrayList<DownloadableItem> itemsList;
 
   private int currentCount = 0;
-  private DownloadManager downloadManager;
+  private final DownloadManager downloadManager;
   private static final String TAG = ItemListAdapter.class.getSimpleName();
   private ItemDownloadPercentObserver mItemDownloadPercentObserver;
   private DownloadRequestsSubscriber mDownloadRequestsSubscriber;
   private WeakReference<Context> contextWeakReference;
+  private RecyclerView recyclerView;
 
-  public ItemListAdapter(Context context, ArrayList<Item> itemList) {
-    this.itemsList = itemList;
+  public ItemListAdapter(Context context, ArrayList<DownloadableItem> downloadableItemList,
+                         RecyclerView recyclerView) {
+    this.itemsList = downloadableItemList;
     this.downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+
+    //Observable for percent of individual downloads.
     mItemDownloadPercentObserver = new ItemDownloadPercentObserver(this);
     mItemDownloadPercentObserver.init();
+
+    //Observable for download request
     mDownloadRequestsSubscriber = new DownloadRequestsSubscriber
         (downloadManager, this);
-
     mDownloadRequestsSubscriber.init();
     mDownloadRequestsSubscriber.setPercentageObservableEmitter(
         mItemDownloadPercentObserver.getPercentageObservableEmitter());
-    mItemDownloadPercentObserver.setDownloadRequestsSubscription(
-        mDownloadRequestsSubscriber.getDownloadRequestsSubscription());
-    contextWeakReference = new WeakReference<Context>(context);
+    contextWeakReference = new WeakReference(context);
+    this.recyclerView = recyclerView;
   }
 
   public int getCurrentCount() {
@@ -64,19 +65,68 @@ public class ItemListAdapter extends RecyclerView.Adapter {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.layout_image_details, parent, false);
     ItemDetailsViewHolder itemDetailsViewHolder =
-        new ItemDetailsViewHolder(view, mDownloadRequestsSubscriber.getDownloadsFlowableEmitter());
+        new ItemDetailsViewHolder(view, contextWeakReference.get(), this);
     return itemDetailsViewHolder;
   }
 
   @Override
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     if (holder instanceof ItemDetailsViewHolder) {
-      Item item = itemsList.get(position);
+      System.out.println("onBin");
+      DownloadableItem downloadableItem = itemsList.get(position);
       String downloadingStatus = ItemHelper.getDownloadStatus(contextWeakReference.get(),
-          item.getId());
-      item.setDownloadingStatus(DownloadingStatus.getValue(downloadingStatus));
-      ((ItemDetailsViewHolder) holder).updateImageDetails(item);
+          downloadableItem.getId());
+      int downloadPercent =
+          ItemHelper.getDownloadPercent(contextWeakReference.get(), downloadableItem
+              .getId());
+      if (downloadableItem.getId().equalsIgnoreCase("1")) {
+        System.out.println("receiving");
+        System.out.println("percent " + downloadableItem.getItemDownloadPercent());
+        System.out.println("status" + downloadableItem.getDownloadingStatus());
+      }
+      downloadableItem.setDownloadingStatus(DownloadingStatus.getValue(downloadingStatus));
+      downloadableItem.setItemDownloadPercent(downloadPercent);
+      ((ItemDetailsViewHolder) holder).updateImageDetails(downloadableItem);
+      if (downloadPercent == Constants.DOWNLOAD_COMPLETE_PERCENT) {
+        setCurrentCount(getCurrentCount() - 1);
+        mDownloadRequestsSubscriber.getDownloadRequestsSubscription()
+            .request(Constants.MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS -
+                getCurrentCount());
+        ((ItemDetailsViewHolder) holder).setImageToCompletedState(downloadableItem.getId());
+      }
     }
+  }
+
+  public void setData(DownloadableItem downloadableItem) {
+    if (downloadableItem == null) {
+      return;
+    }
+    ItemHelper.setDownloadPercent(contextWeakReference.get(), downloadableItem.getId(),
+        downloadableItem
+            .getItemDownloadPercent());
+    ItemHelper.setDownloadStatus(contextWeakReference.get(), downloadableItem.getId(),
+        downloadableItem.getDownloadingStatus());
+
+    int position = Integer.parseInt(downloadableItem.getId()) - 1;
+    ItemDetailsViewHolder itemDetailsViewHolder = (ItemDetailsViewHolder)
+        recyclerView.findViewHolderForLayoutPosition(position);
+    if (itemDetailsViewHolder == null) {
+      return;
+    }
+
+    Integer downloadPercent = (int) (downloadableItem.getItemDownloadPercent());
+    itemDetailsViewHolder.setImageInProgressState(downloadPercent, downloadableItem.getId());
+    if (downloadPercent == Constants.DOWNLOAD_COMPLETE_PERCENT) {
+      setCurrentCount(getCurrentCount() - 1);
+      mDownloadRequestsSubscriber.getDownloadRequestsSubscription()
+          .request(Constants.MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS -
+              getCurrentCount());
+      itemDetailsViewHolder.setImageToCompletedState(downloadableItem.getId());
+    }
+  }
+
+  public void onNewDownload(DownloadableItem downloadableItem) {
+    mDownloadRequestsSubscriber.getDownloadsFlowableEmitter().onNext(downloadableItem);
   }
 
   @Override
