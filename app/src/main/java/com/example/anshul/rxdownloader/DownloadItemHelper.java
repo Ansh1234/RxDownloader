@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Created by anshul on 14/2/17.
  */
 
-public class ItemHelper {
+public class DownloadItemHelper {
 
   public static ArrayList getItems(Context context) {
     ArrayList<DownloadableItem> downloadableItems = new ArrayList<>();
@@ -40,13 +40,37 @@ public class ItemHelper {
     return downloadableItems;
   }
 
+  /**
+   * This method returns the downloadable Item with the latest percent and downloading status
+   * @param context
+   * @param downloadableItem
+   * @return
+   */
+  public static DownloadableItem getItem(Context context, DownloadableItem
+      downloadableItem) {
+    if (context == null || downloadableItem == null) {
+      return downloadableItem;
+    }
+    String downloadingStatus = DownloadItemHelper.getDownloadStatus(context, downloadableItem.getId());
+    int downloadPercent = DownloadItemHelper.getDownloadPercent(context, downloadableItem.getId());
+    downloadableItem.setDownloadingStatus(DownloadingStatus.getValue(downloadingStatus));
+    downloadableItem.setItemDownloadPercent(downloadPercent);
+    return downloadableItem;
+  }
+
   public static String getDownloadStatus(Context context, String itemId) {
     SharedPreferences preferences =
         context.getSharedPreferences(Constants.SHARED_PREFERENCES, Context
             .MODE_PRIVATE);
     return preferences.getString(Constants.DOWNLOAD_PREFIX + itemId,
-        DownloadingStatus.NOT_DOWNLOADED
-            .getDownloadStatus());
+        DownloadingStatus.NOT_DOWNLOADED.getDownloadStatus());
+  }
+
+  public static void persistItemState(Context context, DownloadableItem downloadableItem) {
+    DownloadItemHelper.setDownloadPercent(context, downloadableItem.getId(),
+        downloadableItem.getItemDownloadPercent());
+    DownloadItemHelper.setDownloadStatus(context, downloadableItem.getId(),
+        downloadableItem.getDownloadingStatus());
   }
 
   public static void setDownloadStatus(Context context, String itemId, DownloadingStatus

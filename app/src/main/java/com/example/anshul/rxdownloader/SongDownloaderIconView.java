@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -76,7 +75,8 @@ public class SongDownloaderIconView extends View {
     this.itemId = itemId;
   }
 
-  public void updateProgress(int progress) {
+  public void updateProgress(Context context,int progress) {
+    DownloadItemHelper.setDownloadPercent(context, itemId, progress);
     this.progress = progress;
   }
 
@@ -84,22 +84,19 @@ public class SongDownloaderIconView extends View {
   public void onDraw(Canvas canvas) {
 
     Matrix matrix = new Matrix();
+    DownloadItemHelper.setDownloadStatus(getContext(), itemId, downloadingStatus);
 
     switch (downloadingStatus) {
       case NOT_DOWNLOADED:
-        ItemHelper.setDownloadStatus(getContext(),itemId,DownloadingStatus.NOT_DOWNLOADED);
         drawBitmapOnCanvas(canvas, matrix, mIconImageNotDownloaded);
         break;
       case DOWNLOADED:
         drawBitmapOnCanvas(canvas, matrix, mIconImageCompleted);
-        ItemHelper.setDownloadStatus(getContext(),itemId,DownloadingStatus.DOWNLOADED);
         break;
       case IN_PROGRESS:
         drawInProgressIconOnCanvas(canvas);
-        ItemHelper.setDownloadStatus(getContext(),itemId,DownloadingStatus.IN_PROGRESS);
         break;
       case WAITING:
-        ItemHelper.setDownloadStatus(getContext(),itemId,DownloadingStatus.WAITING);
         matrix.postRotate(rotateAngle++);
         if (rotateAngle < TOTAL_ANGLE) {
           invalidate();

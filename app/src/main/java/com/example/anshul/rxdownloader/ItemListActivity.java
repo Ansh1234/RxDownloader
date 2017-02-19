@@ -24,7 +24,7 @@ public class ItemListActivity extends AppCompatActivity {
     RecyclerView itemsListView = (RecyclerView) findViewById(R.id.download_items_list);
 
     //Get a list of downloadable items.
-    ArrayList<DownloadableItem> downloadableItemList = ItemHelper.getItems(this);
+    ArrayList<DownloadableItem> downloadableItemList = DownloadItemHelper.getItems(this);
     itemListAdapter = new ItemListAdapter(this, downloadableItemList,itemsListView);
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
     itemsListView.setLayoutManager(linearLayoutManager);

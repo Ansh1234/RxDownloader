@@ -16,18 +16,10 @@ public class ItemDownloadPercentObserver {
 
   private ObservableEmitter percentageObservableEmitter;
   private Disposable downloadPercentDisposable;
-  private final ItemListAdapter itemListAdapter;
+  private final ItemPercentCallback callback;
 
-  public ItemDownloadPercentObserver(ItemListAdapter itemListAdapter) {
-    this.itemListAdapter = itemListAdapter;
-  }
-
-  public ObservableEmitter getPercentageObservableEmitter() {
-    return percentageObservableEmitter;
-  }
-
-
-  public void init() {
+  public ItemDownloadPercentObserver(ItemPercentCallback callback) {
+    this.callback=callback;
     ObservableOnSubscribe observableOnSubscribe = new ObservableOnSubscribe() {
       @Override
       public void subscribe(ObservableEmitter e) throws Exception {
@@ -39,6 +31,10 @@ public class ItemDownloadPercentObserver {
 
     final Observer subscriber = getObserver();
     observable.subscribeWith(subscriber);
+  }
+
+  public ObservableEmitter getPercentageObservableEmitter() {
+    return percentageObservableEmitter;
   }
 
   private Observer getObserver() {
@@ -53,7 +49,7 @@ public class ItemDownloadPercentObserver {
         if (!(value instanceof DownloadableItem)) {
           return;
         }
-        itemListAdapter.setData((DownloadableItem) value);
+        callback.updateDownloadableItem((DownloadableItem) value);
       }
 
       @Override

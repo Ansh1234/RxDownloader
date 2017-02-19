@@ -26,8 +26,8 @@ public class RxDownloadManagerHelper {
    * @param downloadUrl     - The url of the item to be downloaded.
    * @return - the download id of the download.
    */
-  public static long submitRequestToDownloadManager(DownloadManager downloadManager,
-                                                    String downloadUrl) {
+  public static long enqueueDownload(DownloadManager downloadManager,
+                                     String downloadUrl) {
     if (downloadManager == null || downloadUrl == null || downloadUrl.equals("")) {
       return INVALID_DOWNLOAD_ID;
     }
@@ -75,9 +75,9 @@ public class RxDownloadManagerHelper {
       percentFlowableEmiitter.onNext(downloadableItem);
       downloadableItem.setLastEmittedDownloadPercent(currentDownloadPercent);
     }
-//    Log.d(TAG,
-//        " Querying the DB: DownloadStatus is " + downloadStatus + " and downloadPercent is " +
-//            "" + currentDownloadPercent);
+    Log.d(TAG,
+        " Querying the DB: DownloadStatus is " + downloadStatus + " and downloadPercent is " +
+            "" + currentDownloadPercent);
     switch (downloadStatus) {
       case DownloadManager.STATUS_FAILED:
         break;

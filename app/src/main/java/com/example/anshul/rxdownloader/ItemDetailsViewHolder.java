@@ -1,13 +1,11 @@
 package com.example.anshul.rxdownloader;
 
 import android.content.Context;
-import android.media.browse.MediaBrowser;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import io.reactivex.FlowableEmitter;
 
 /**
  * Created by anshul on 15/1/17.
@@ -21,9 +19,9 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
   private ImageView itemCoverIcon;
   private DownloadableItem downloadableItem;
   private Context context;
-  private ItemDownloaderCallback callback;
-  public ItemDetailsViewHolder(View itemView, Context context,
-                               ItemDownloaderCallback callback) {
+  private ItemDownloadCallback callback;
+
+  public ItemDetailsViewHolder(View itemView, Context context, ItemDownloadCallback callback) {
     super(itemView);
 
     if (itemView == null) {
@@ -36,7 +34,7 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
     imageDownloadIcon.init();
     imageDownloadIcon.setOnClickListener(this);
     this.context = context;
-    this.callback  = callback;
+    this.callback = callback;
   }
 
   public void updateImageDetails(DownloadableItem downloadableItem) {
@@ -45,10 +43,17 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
     itemCoverIcon.setImageResource(downloadableItem.getItemCoverId());
     imageDownloadIcon.setItemId(downloadableItem.getId());
     imageDownloadIcon.updateDownloadingStatus(downloadableItem.getDownloadingStatus());
-    if(downloadableItem.getDownloadingStatus()==DownloadingStatus.IN_PROGRESS){
-      setImageInProgressState(downloadableItem.getItemDownloadPercent(),downloadableItem.getId());
-    }
 
+    if (downloadableItem.getDownloadingStatus() == DownloadingStatus.DOWNLOADED) {
+      setImageToCompletedState(downloadableItem.getId());
+    } else if (downloadableItem.getDownloadingStatus() == DownloadingStatus.IN_PROGRESS &&
+        downloadableItem.getItemDownloadPercent()
+            == Constants.DOWNLOAD_COMPLETE_PERCENT) {
+      setImageToCompletedState(downloadableItem.getId());
+      callback.onDownloadComplete();
+    } else if (downloadableItem.getDownloadingStatus() == DownloadingStatus.IN_PROGRESS) {
+      setImageInProgressState(downloadableItem.getItemDownloadPercent(), downloadableItem.getId());
+    }
   }
 
   @Override
@@ -57,7 +62,7 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
     //Only when the icon is in not downloaded state, then do the following.
     if (downloadingStatus == DownloadingStatus.NOT_DOWNLOADED) {
       setImageToWaitingState(downloadableItem.getId());
-      callback.onNewDownload(downloadableItem);
+      callback.onDownloadEnqueued(downloadableItem);
     }
   }
 
@@ -76,11 +81,10 @@ public class ItemDetailsViewHolder extends RecyclerView.ViewHolder
   }
 
   public void setImageInProgressState(int progress, String itemId) {
-    ItemHelper.setDownloadPercent(context, itemId, progress);
     if (!downloadableItem.getId().equalsIgnoreCase(itemId)) {
       return;
     }
-    imageDownloadIcon.updateProgress(progress);
+    imageDownloadIcon.updateProgress(context, progress);
     imageDownloadIcon.updateDownloadingStatus(DownloadingStatus.IN_PROGRESS);
   }
 }
