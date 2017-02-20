@@ -45,7 +45,6 @@ public class SongDownloaderIconView extends View {
 
 
   public void init() {
-    System.out.println("inside init");
     mPaint = new Paint();
     mIconImageNotDownloaded =
         BitmapFactory.decodeResource(getResources(), R.drawable.icon_image_not_downloaded);

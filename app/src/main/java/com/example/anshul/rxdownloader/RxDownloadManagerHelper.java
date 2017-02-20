@@ -71,7 +71,6 @@ public class RxDownloadManagerHelper {
     downloadableItem.setItemDownloadPercent(currentDownloadPercent);
     if ((currentDownloadPercent - previousDownloadPercent >= MIN_DOWNLOAD_PERCENT_DIFF) ||
         currentDownloadPercent == DOWNLOAD_COMPLETE_PERCENT) {
-      System.out.println(percentFlowableEmiitter.isDisposed());
       percentFlowableEmiitter.onNext(downloadableItem);
       downloadableItem.setLastEmittedDownloadPercent(currentDownloadPercent);
     }
@@ -129,7 +128,9 @@ public class RxDownloadManagerHelper {
       float bytesTotal =
           cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
       int downloadPercent = (int) ((bytesDownloaded / bytesTotal) * PERCENT_MULTIPLIER);
-      downloadableResult.setPercent(downloadPercent);
+      if (downloadPercent <= Constants.DOWNLOAD_COMPLETE_PERCENT) {
+        downloadableResult.setPercent(downloadPercent);
+      }
       //Get the download status
       int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
       int downloadStatus = cursor.getInt(columnIndex);
