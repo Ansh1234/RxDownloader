@@ -5,6 +5,7 @@ This project is for downloading items(songs, images etc) in Android using RxJava
 * Only 2 items can be downloaded at a time. So even if the user clicks multiple items to download, only 2 of them will be actually downloaded at a time and the rest of the downloads will be en queued.
 * The download percent is shown to the user. But only if the difference between the current percentage and the previously shown percentage is greater than 5 percent.
 
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 There are few important RxJava classes that I have used to do this project:
 
