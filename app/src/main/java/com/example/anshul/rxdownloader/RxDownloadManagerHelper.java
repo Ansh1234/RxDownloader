@@ -56,7 +56,8 @@ public class RxDownloadManagerHelper {
       return;
     }
 
-    long previousDownloadPercent = downloadableItem.getLastEmittedDownloadPercent();
+    long lastEmittedDownloadPercent = downloadableItem.getLastEmittedDownloadPercent();
+
 
     DownloadableResult downloadableResult = getDownloadResult(downloadManager, downloadableItem
         .getDownloadId());
@@ -69,7 +70,7 @@ public class RxDownloadManagerHelper {
     int currentDownloadPercent = downloadableResult.getPercent();
     int downloadStatus = downloadableResult.getDownloadStatus();
     downloadableItem.setItemDownloadPercent(currentDownloadPercent);
-    if ((currentDownloadPercent - previousDownloadPercent >= MIN_DOWNLOAD_PERCENT_DIFF) ||
+    if ((currentDownloadPercent - lastEmittedDownloadPercent >= MIN_DOWNLOAD_PERCENT_DIFF) ||
         currentDownloadPercent == DOWNLOAD_COMPLETE_PERCENT) {
       percentFlowableEmiitter.onNext(downloadableItem);
       downloadableItem.setLastEmittedDownloadPercent(currentDownloadPercent);

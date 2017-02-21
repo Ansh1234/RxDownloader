@@ -66,10 +66,7 @@ public class ItemListAdapter extends RecyclerView.Adapter implements
    * @param downloadableItem - Item to be downloaded.
    */
   public void onDownloadEnqueued(DownloadableItem downloadableItem) {
-    if (mDownloadRequestsSubscriber.getDownloadsFlowableEmitter() == null) {
-      return;
-    }
-    mDownloadRequestsSubscriber.getDownloadsFlowableEmitter().onNext(downloadableItem);
+    mDownloadRequestsSubscriber.emitNextItem(downloadableItem);
   }
 
   @Override
@@ -106,8 +103,8 @@ public class ItemListAdapter extends RecyclerView.Adapter implements
   public void onDownloadComplete() {
     //Decrement the current number of downloads by 1
     currentDownloadsCount--;
-    mDownloadRequestsSubscriber.getDownloadRequestsSubscription()
-        .request(Constants.MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS - currentDownloadsCount);
+    mDownloadRequestsSubscriber.requestSongs(Constants.MAX_COUNT_OF_SIMULTANEOUS_DOWNLOADS -
+        currentDownloadsCount);
   }
 
 

@@ -16,7 +16,6 @@ public class DownloadRequestsSubscriber {
 
   private Subscription downloadRequestsSubscription;
   private FlowableEmitter downloadsFlowableEmitter;
-  private final String TAG = DownloadRequestsSubscriber.class.getSimpleName();
   private ItemDownloadCallback itemDownloadCallback;
 
 
@@ -34,12 +33,12 @@ public class DownloadRequestsSubscriber {
     flowable.subscribeWith(subscriber);
   }
 
-  public Subscription getDownloadRequestsSubscription() {
-    return downloadRequestsSubscription;
+  public void requestSongs(int number) {
+    downloadRequestsSubscription.request(number);
   }
 
-  public FlowableEmitter getDownloadsFlowableEmitter() {
-    return downloadsFlowableEmitter;
+  public void emitNextItem(DownloadableItem downloadableItem) {
+    downloadsFlowableEmitter.onNext(downloadableItem);
   }
 
   private Subscriber getSubscriber() {

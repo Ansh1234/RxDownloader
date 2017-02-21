@@ -1,7 +1,5 @@
 package com.example.anshul.rxdownloader;
 
-import org.reactivestreams.Subscription;
-
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
