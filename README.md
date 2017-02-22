@@ -23,3 +23,7 @@ There are few important RxJava classes that I have used to do this project:
 
 
 I wrote a blog about how I used RxJava2 for achieving this. [Here](https://medium.com/@anshuljain/rxjava2-demo2-downloading-songs-in-android-2ebf91ac3a9a#.ksiae7jwc) is the post.
+
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+**NOTE** : Since this is a demo project and not an actual project, I have kept the images and urls to be downloaded hardcoded in the client. There is no server call. Also, for every item I am saving the download status and download percent in the shared preference. In a real project, it should be ideally saved in a database.
