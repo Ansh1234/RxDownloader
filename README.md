@@ -27,3 +27,8 @@ I wrote a blog about how I used RxJava2 for achieving this. [Here](https://mediu
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 **NOTE** : Since this is a demo project and not an actual project, I have kept the images and urls to be downloaded hardcoded in the client. There is no server call. Also, for every item I am saving the download status and download percent in the shared preference. In a real project, it should be ideally saved in a database.
+
+------
+
+Checkout my library [AppDataReader](https://github.com/Ansh1234/AppDataReader) - A library for reading Shared Preferences and Database values within the application.
+
