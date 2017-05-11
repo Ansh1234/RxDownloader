@@ -29,6 +29,13 @@ I wrote a blog about how I used RxJava2 for achieving this. [Here](https://mediu
 **NOTE** : Since this is a demo project and not an actual project, I have kept the images and urls to be downloaded hardcoded in the client. There is no server call. Also, for every item I am saving the download status and download percent in the shared preference. In a real project, it should be ideally saved in a database.
 
 ------
+**Checkout my other projects**
 
-Checkout my library [AppDataReader](https://github.com/Ansh1234/AppDataReader) - A library for reading Shared Preferences and Database values within the application.
+[AppDataReader](https://github.com/Ansh1234/AppDataReader) - A library for reading Shared Preferences and Database values within the application.
+
+[RxFbLiveVideoEmoticons](https://github.com/Ansh1234/RxFbLiveVideoEmoticons) - Demo of Fb Live Video Reactions using RxJava2. 
+
+[WebViewDemo](https://github.com/Ansh1234/WebViewDemo) - A demo project for showing how to use WebViews in Android.
+
+
 
