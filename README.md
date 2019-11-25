@@ -1,4 +1,4 @@
-##Downloader Demo using RxJava
+## Downloader Demo using RxJava
 
 ## Overview
 This project is for downloading items(songs, images etc) in Android using RxJava2. There are, however 2 conditions which I have set for downloading.
